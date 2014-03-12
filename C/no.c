@@ -18,9 +18,6 @@ void fill_node(node* empty_node);
 long node_count = 0;
 
 int main(int argc, char** argv) {
-	print_tree(ROOT_PATH);
-	exit(0);
-
 	int i;
 	char filename[TEXT_SHORT];
 	if (argc != 2) {
@@ -157,7 +154,7 @@ printf("Insert without split\n");
 	strncpy(leaf_node->children[j], value, TEXT_SHORT);
 	leaf_node->num_filled++;
 	write_node(leaf_node);
-//print_node(leaf_node);
+print_node(leaf_node);
 	free(leaf_node);
 }
 
@@ -223,8 +220,8 @@ printf("Insert with split\n");
 
 	write_node(new_leaf);	
 	write_node(leaf_node);
-//print_node(leaf_node);
-//print_node(new_leaf);
+print_node(leaf_node);
+print_node(new_leaf);
 
 	insert_key_into_parent(key_for_parent, leaf_node->filename, new_leaf->filename);
 	free(leaf_node);
@@ -268,9 +265,25 @@ printf("Insert key into parent\n");
 		write_node(root);
 		write_node(old_child_node);
 		write_node(new_child_node);
-//print_node(root);
-//print_node(old_child_node);
-//print_node(new_child_node);
+
+		node* child_iter = (node *) malloc(sizeof(node));
+		fill_node(child_iter);
+
+		if(old_child_node->is_leaf == FALSE){
+			int i;
+			for(i = 0; i <= old_child_node->num_filled; i++) {
+					read_node(child_iter, old_child_node->children[i]);
+					strncpy(child_iter->parent, old_child_node->filename, TEXT_SHORT);
+			printf("[] Assigning %s as parent of %s\n", old_child_node->filename, child_iter->filename);
+					write_node(child_iter);
+			//print_node(child_iter);
+			}
+		}
+
+		free(child_iter);
+print_node(root);
+print_node(old_child_node);
+print_node(new_child_node);
 		
 		free(root);
 	}else{
@@ -301,7 +314,7 @@ printf("Insert key into parent\n");
 			strncpy(parent_node->children[i+1], new_child, TEXT_SHORT);
 			parent_node->num_filled++;
 			write_node(parent_node);
-//print_node(parent_node);
+print_node(parent_node);
 		}else{
 			
 			insert_node_with_split(parent_node->filename, new_child, key, i);
@@ -333,16 +346,18 @@ printf("With Split, node\n");
 	int i, j, middle;
 	long key_for_parent;
 	
-//print_node(parent_node);
+print_node(parent_node);
 	
-	for(i = 0, j = 0; i < FAN_OUT; i++, j++) {
+	for(i = 0, j = 0; i < NUM_KEYS; i++, j++) {
 		if(j == index) {
 			//skip the one where we are inserting the key
 			j++;
 		}
 		copied_keys[j] = parent_node->keys[i];
+		printf("%li\n", copied_keys[j]);
+
 	}
-	for(i = 0, j = 0; i < FAN_OUT + 1; i++, j++) {
+	for(i = 0, j = 0; i < NUM_KEYS + 1; i++, j++) {
 		if(j == index + 1) {
 			//skip the one where we are inserting the key
 			j++;
@@ -351,6 +366,7 @@ printf("With Split, node\n");
 	}
 
 	copied_keys[index] = key;
+	printf("%li\n", copied_keys[index]);
 	strncpy(copied_children[index + 1], new_child, TEXT_SHORT);
 
 	middle = (FAN_OUT + 1) / 2;
@@ -363,7 +379,6 @@ printf("With Split, node\n");
 	strncpy(new_node->parent, "\0", TEXT_SHORT);
 	new_node->is_leaf = FALSE;
 	new_node->num_filled = 0;
-
 //TODO: check if we need to rewrite stuff here, or just update num_filled
 	parent_node->num_filled = 0;
 	for(i = 0; i < middle - 1; i++) {
@@ -382,21 +397,21 @@ printf("With Split, node\n");
 	strncpy(new_node->children[j], copied_children[i], TEXT_SHORT);
 	strncpy(new_node->parent, parent_node->parent, TEXT_SHORT);
 	//saves the name of the parent in all the children
-	for(i = 0; i <= new_node->num_filled; i++) {
-		read_node(child_iter, new_node->children[i]);
-		strncpy(child_iter->parent, new_node->filename, TEXT_SHORT);
-//printf("Assigning %s as parent of %s\n", new_node->filename, child_iter->filename);
-		write_node(child_iter);
-//print_node(child_iter);
-	}
-
 	write_node(parent_node);
 	write_node(new_child_node);
 	write_node(new_node);
 
-//print_node(parent_node);
-//print_node(new_node);
-//print_node(new_child_node);
+	for(i = 0; i <= new_node->num_filled; i++) {
+		read_node(child_iter, new_node->children[i]);
+		strncpy(child_iter->parent, new_node->filename, TEXT_SHORT);
+printf("Assigning %s as parent of %s\n", new_node->filename, child_iter->filename);
+		write_node(child_iter);
+//print_node(child_iter);
+	}
+
+print_node(parent_node);
+print_node(new_node);
+print_node(new_child_node);
 
 	insert_key_into_parent(key_for_parent, parent_node->filename, new_node->filename);
 

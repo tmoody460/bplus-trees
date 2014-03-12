@@ -1,0 +1,40 @@
+
+public class Node {
+	
+	String[] children;
+	long[] keys;
+
+	public Node(String path) {
+		
+		//readActual(path);
+		readFake();
+	}
+	
+	private void readFake() {
+		
+		children = new String[2];
+		keys = new long[1];
+		//hopefully the parts are null
+	}
+	
+	/**
+	 * Returns true if it needs to split. Too hard for now
+	 * 
+	 * If it doesn't need to, returns false
+	 */
+	public boolean addChild(String path, long key) {
+		
+		if(children[0] == null) {
+			children[0] = path;
+		} else if(children[1] == null) {
+			keys[0] = key;
+			children[1] = path;
+		} else {			
+			return true;
+		}
+		
+		return false;
+	}
+	
+	
+}

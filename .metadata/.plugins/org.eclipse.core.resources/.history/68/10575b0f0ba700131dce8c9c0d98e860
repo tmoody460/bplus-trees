@@ -1,0 +1,18 @@
+
+public class BPlusTree {
+
+	private Node root;
+	
+	public BPlusTree() {
+		
+		root = new Node("root.dat");
+	}
+	
+	public boolean add(String path, long key) {
+		
+		
+		
+		
+		return false;
+	}
+}

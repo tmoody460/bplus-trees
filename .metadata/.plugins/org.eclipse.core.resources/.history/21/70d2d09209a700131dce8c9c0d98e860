@@ -1,0 +1,10 @@
+
+public class BPlusTree {
+
+	private Node root;
+	
+	public BPlusTree() {
+		
+		root = new Node("root.dat");
+	}
+}
