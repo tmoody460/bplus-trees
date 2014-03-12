@@ -18,9 +18,6 @@ void fill_node(node* empty_node);
 long node_count = 0;
 
 int main(int argc, char** argv) {
-	print_tree(ROOT_PATH);
-	exit(0);
-
 	int i;
 	char filename[TEXT_SHORT];
 	if (argc != 2) {
@@ -105,7 +102,7 @@ printf("Create Tree modified (Key: %li, Value: %s)\n", key, value);
 	strncpy(root->parent, "\0", TEXT_SHORT);
 	root->num_filled = 1;
 	write_node(root);
-//print_node(root);
+print_node(root);
 	free(root);
 }
 
@@ -157,7 +154,7 @@ printf("Insert without split\n");
 	strncpy(leaf_node->children[j], value, TEXT_SHORT);
 	leaf_node->num_filled++;
 	write_node(leaf_node);
-//print_node(leaf_node);
+print_node(leaf_node);
 	free(leaf_node);
 }
 
@@ -185,11 +182,13 @@ printf("Insert with split\n");
 	new_leaf->is_leaf = TRUE;
 	new_leaf->num_filled = 0;
 	middle = (NUM_KEYS + 1) / 2;
+printf("wtf\n");
 	// Get the index of the spot where key should be inserted
 	insert_index = 0;
 	while(insert_index < leaf_node->num_filled && leaf_node->keys[insert_index] < key){
 		insert_index++;
 	}
+printf("wtf2\n");
 	for (i = 0, j = 0; i < leaf_node->num_filled; i++, j++)
 	{
 		if(j == insert_index){
@@ -198,9 +197,16 @@ printf("Insert with split\n");
 		copied_keys[j] = leaf_node->keys[i];
 		strncpy(copied_children[j], leaf_node->children[i], TEXT_SHORT);
 	}
+printf("wtf3\n");
 	copied_keys[insert_index] = key;
 	strncpy(copied_children[insert_index], value, TEXT_SHORT);
 
+/*	for(i = 0; i < FAN_OUT; i++){
+
+		printf("Child: %s\n", copied_children[i]);
+		printf("Keys %li\n", copied_keys[i]);
+	}*/
+printf("wtf4\n");
 	// Reset num filled so we can count back up as we add them
 	leaf_node->num_filled = 0;
 	for (i = 0; i < middle; i++)
@@ -209,6 +215,7 @@ printf("Insert with split\n");
 		strncpy(leaf_node->children[i], copied_children[i], TEXT_SHORT);
 		leaf_node->num_filled++;
 	}
+printf("wtf5\n");
 	for (j = 0, i = middle; i < FAN_OUT; j++, i++)
 	{
 		new_leaf->keys[j] = copied_keys[i];
@@ -218,13 +225,18 @@ printf("Insert with split\n");
 	strncpy(new_leaf->children[FAN_OUT - 1], leaf_node->children[FAN_OUT - 1], TEXT_SHORT);
 	strncpy(leaf_node->children[FAN_OUT - 1], new_leaf->filename, TEXT_SHORT);
 	strncpy(new_leaf->parent, leaf_node->parent, TEXT_SHORT);
+printf("wtf5\n");
 	strncpy(filename_for_parent, leaf_node->filename, TEXT_SHORT);
 	key_for_parent = new_leaf->keys[0];
 
+	//sprintf(filename, "user_tree/node_%06li.dat", node_count);
+	//strncpy(leaf_node->filename, filename, TEXT_SHORT);
+	//node_count++;
+
 	write_node(new_leaf);	
 	write_node(leaf_node);
-//print_node(leaf_node);
-//print_node(new_leaf);
+print_node(leaf_node);
+print_node(new_leaf);
 
 	insert_key_into_parent(key_for_parent, leaf_node->filename, new_leaf->filename);
 	free(leaf_node);
@@ -235,6 +247,9 @@ printf("Insert with split\n");
 
 void insert_key_into_parent(long key, char* old_child, char* new_child) {
 printf("Insert key into parent\n");
+printf("Old child: %s\n", old_child);
+printf("New child: %s\n", new_child);
+printf("%li\n", key);
 	char filename[TEXT_SHORT];
 
 	node* old_child_node = (node *) malloc(sizeof(node));
@@ -268,9 +283,9 @@ printf("Insert key into parent\n");
 		write_node(root);
 		write_node(old_child_node);
 		write_node(new_child_node);
-//print_node(root);
-//print_node(old_child_node);
-//print_node(new_child_node);
+print_node(root);
+print_node(old_child_node);
+print_node(new_child_node);
 		
 		free(root);
 	}else{
@@ -283,8 +298,10 @@ printf("Insert key into parent\n");
 		// Find which child of the parent corresponds to 'old child node'
 		int i = 0;
 		while(i <= parent_node->num_filled && strcmp(parent_node->children[i], old_child) !=0){
+			printf("%s != %s\n", parent_node->children[i], old_child);
 			i++;
 		}
+printf("important i: %d\n", i);
 		// If parent is not full
 		if(parent_node->num_filled < NUM_KEYS){ 
 
@@ -296,12 +313,15 @@ printf("Insert key into parent\n");
 				parent_node->keys[j] = parent_node->keys[j-1];
 				strncpy(parent_node->children[j+1], parent_node->children[j], TEXT_SHORT);
 			}
+printf("Old child: %s\n", old_child);
+printf("New child: %s\n", new_child);
+printf("%li\n", key);
 
 			parent_node->keys[i] = key;
 			strncpy(parent_node->children[i+1], new_child, TEXT_SHORT);
 			parent_node->num_filled++;
 			write_node(parent_node);
-//print_node(parent_node);
+print_node(parent_node);
 		}else{
 			
 			insert_node_with_split(parent_node->filename, new_child, key, i);
@@ -333,7 +353,7 @@ printf("With Split, node\n");
 	int i, j, middle;
 	long key_for_parent;
 	
-//print_node(parent_node);
+print_node(parent_node);
 	
 	for(i = 0, j = 0; i < FAN_OUT; i++, j++) {
 		if(j == index) {
@@ -352,6 +372,13 @@ printf("With Split, node\n");
 
 	copied_keys[index] = key;
 	strncpy(copied_children[index + 1], new_child, TEXT_SHORT);
+
+/*for (i = 0; i < FAN_OUT; i++)
+{
+	printf("Child: %s\n", copied_children[i]);
+	printf("Key: %li\n", copied_keys[i]);
+}
+printf("Child: %s\n", copied_children[i]);*/
 
 	middle = (FAN_OUT + 1) / 2;
 
@@ -374,31 +401,34 @@ printf("With Split, node\n");
 	strncpy(parent_node->children[i], copied_children[i], TEXT_SHORT);
 	key_for_parent = copied_keys[i];
 //^ save the middle key to copy to parent
+printf("Whatever\n");
 	for(i = middle, j = 0; i < FAN_OUT; i++, j++) {
+printf("i: %d j: %d\n", i, j);
 		strncpy(new_node->children[j], copied_children[i], TEXT_SHORT);
 		new_node->keys[j] = copied_keys[i];
 		new_node->num_filled++;
 	}
+printf("Whatever 2\n");
 	strncpy(new_node->children[j], copied_children[i], TEXT_SHORT);
 	strncpy(new_node->parent, parent_node->parent, TEXT_SHORT);
+printf("Whatever 3\n");
 	//saves the name of the parent in all the children
 	for(i = 0; i <= new_node->num_filled; i++) {
 		read_node(child_iter, new_node->children[i]);
 		strncpy(child_iter->parent, new_node->filename, TEXT_SHORT);
-//printf("Assigning %s as parent of %s\n", new_node->filename, child_iter->filename);
+printf("Assigning %s as parent of %s\n", new_node->filename, child_iter->filename);
 		write_node(child_iter);
-//print_node(child_iter);
+print_node(child_iter);
 	}
+print_node(parent_node);
+print_node(new_node);
+print_node(new_child_node);
 
 	write_node(parent_node);
 	write_node(new_child_node);
 	write_node(new_node);
 
-//print_node(parent_node);
-//print_node(new_node);
-//print_node(new_child_node);
-
-	insert_key_into_parent(key_for_parent, parent_node->filename, new_node->filename);
+	insert_key_into_parent(key, parent_node->filename, new_node->filename);
 
 	free(child_iter);
 	free(new_node);

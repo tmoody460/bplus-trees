@@ -73,7 +73,7 @@ printf("reading node: %s\n", filename);
 	FILE *fp = NULL;
 	fp = fopen(filename, "rb");
 
-	strncpy(to_read->filename, filename, TEXT_SHORT);
+	strcpy(to_read->filename, filename);
 	
 
 	for(i = 0; i < FAN_OUT; i++) {
