@@ -243,7 +243,7 @@ printf("Insert key into parent\n");
 
 	if(strcmp(old_child_node->parent, "\0") == 0){
 		// Make a new root, and insert key there
-
+printf("Making a new root\n");
 		node* root = (node *) malloc(sizeof(node));
 		fill_node(root);
 		strncpy(root->filename, ROOT_PATH, TEXT_SHORT);
