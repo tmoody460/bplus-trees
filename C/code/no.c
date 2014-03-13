@@ -55,7 +55,7 @@ printf("inserted key: %li\n", current_user->location_id);
 
 	node* root = (node*) malloc(sizeof(node));
 	fill_node(root);
-	read_node(root, ROOT_PATH);
+	read_node(root, (char*)&ROOT_PATH);
 	print_tree(root->filename);
 	free(root);
 	
@@ -114,7 +114,7 @@ void get_leaf(int key, char* leaf){
 	int i;
 	node* current_node = (node*) malloc(sizeof(node));
 	fill_node(current_node);
-	read_node(current_node, ROOT_PATH);
+	read_node(current_node, (char*)&ROOT_PATH);
 
 	while(current_node->is_leaf == FALSE){
 
