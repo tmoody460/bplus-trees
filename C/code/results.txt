@@ -1,0 +1,22 @@
+Dataset: First 2,000 records
+Generate Location Table:		22.725285	(2000 files)	
+Remove Duplicate Locations:		0.082747	(1725 files)
+Generate SendDateTime Tables:	10.304994	(98357 files)
+Remove Duplicate SendDates:		0.891072	(336 files)
+Remove Duplicate SendTimes:		1.140706	(1440 files)	
+Generate User Table:			0.145818	(2000 files)
+Remove Duplicate Users:			0.083623	(2000 files)
+Generate Message Table:			6.772822	(98357 files)
+Sort Messages:	 				8.793256					
+Sort Users:						0.144842
+
+Query A:						0.001470	37 users
+Query B:						
+Query C:						
+Query D:						
+
+Answers Queries Should Get:
+A:	37 							(18.363054 seconds)
+B:	1509						(0.059006 seconds)
+C:	28							(0.062746 seconds)
+D:	User 985 with 6 messages 	(0.060249 seconds)
