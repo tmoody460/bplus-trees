@@ -1,0 +1,24 @@
+
+public class Node {
+	
+	String[] children;
+	long[] keys;
+
+	public Node(String path) {
+		
+		//readActual(path);
+		readFake();
+	}
+	
+	private void readFake() {
+		
+		children = new String[2];
+		children[0] = "node0.dat";
+		children[1] = "node1.dat";
+		
+		keys = new long[1];
+		keys[0] = 2;
+	}
+	
+	
+}
