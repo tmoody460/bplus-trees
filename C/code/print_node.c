@@ -12,8 +12,8 @@ int main(int argc, char** argv) {
 		exit(0);
 	}
 
-	node* to_print = (node*) malloc(sizeof(node));
-	read_node(to_print, argv[1]);
-	print_node(to_print);
+	user_node* to_print = (user_node*) malloc(sizeof(node));
+	read_user_node(to_print, argv[1]);
+	print_user_node(to_print);
 	free(to_print);
 }

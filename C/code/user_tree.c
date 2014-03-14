@@ -92,7 +92,7 @@ void start_tree(int key, char* value){
 /* Finds the leaf that the key will be inserted into */
 void get_leaf_for_insert(int key, char* leaf){
 
-	int i, start, end, mid;
+	int i, start, end, middle;
 	user_node* current_user_node = (user_node*) malloc(sizeof(user_node));
 	fill_user_node(current_user_node);
 	read_user_node(current_user_node, (char*)&USER_ROOT_PATH);
@@ -121,14 +121,14 @@ printf("Comparing %d with %d\n", current_user_node->keys[middle], key );
 				printf("2 if\n");
 				middle = start;
 				found = TRUE;
-			}else if(current_user_node->keys[middle] >= key 
-				&& current_user_node->keys[middle-1] < key){
+			}else if(current_user_node->keys[middle] > key 
+				&& current_user_node->keys[middle-1] <= key){
 				printf("3 if\n");
 				found = TRUE;
-			}else if (current_user_node->keys[middle] < key){
+			}else if (current_user_node->keys[middle] <= key){
 				printf("4 if\n");
 				start = middle + 1;
-			}else if (current_user_node->keys[middle] >= key){
+			}else if (current_user_node->keys[middle] > key){
 				printf("5 if\n");
 				end = middle - 1;
 			}
@@ -159,7 +159,7 @@ void leaf_insert(char* leaf_filename, int key, char* value){
 	fill_user_node(leaf_user_node);
 	read_user_node(leaf_user_node, leaf_filename);
 
-	int i, j, start, end, mid;
+	int i, j, start, end, middle;
 
 	/* Get the index of the spot where key should be inserted */
 	j = 0;

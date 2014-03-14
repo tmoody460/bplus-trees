@@ -38,7 +38,7 @@ int main(int argc, char** argv) {
 		sprintf(filename, "../data/unique_location/0100000/location_%07d.dat", 0);
 		start_tree(current_location->state, filename);
 	}
-
+	
 	/* read the rest of the locations */
 	for(i = 1; i < num_records; i++) {
 		read_location_better(i, current_location);
@@ -165,7 +165,7 @@ void leaf_insert(char* leaf_filename, char* key, char* value){
 
 	/* Get the index of the spot where key should be inserted */
 	j = 0;
-	while(j < leaf_location_node->num_filled && strcmp(leaf_location_node->keys[j], key) < 0){
+	while(j < leaf_location_node->num_filled && strcmp(leaf_location_node->keys[j], key) <= 0){
 		j++;
 	}
 	
@@ -185,14 +185,14 @@ printf("Comparing %s with %s\n", leaf_location_node->keys[middle], key );
 			printf("2 if\n");
 			middle = start;
 			found = TRUE;
-		}else if(cmp_result >= 0 
-			&& strcmp(leaf_location_node->keys[middle-1], key) < 0){
+		}else if(cmp_result > 0 
+			&& strcmp(leaf_location_node->keys[middle-1], key) <= 0){
 			printf("3 if\n");
 			found = TRUE;
-		}else if (cmp_result < 0){
+		}else if (cmp_result <= 0){
 			printf("4 if\n");
 			start = middle + 1;
-		}else if (cmp_result >= 0){
+		}else if (cmp_result > 0){
 			printf("5 if\n");
 			end = middle - 1;
 		}
