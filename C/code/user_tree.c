@@ -4,6 +4,8 @@
 #include "tables.h"
 #include "query_helper.h"
 #include "rw_methods_user.c"
+#include <sys/time.h>
+#include <sys/times.h>
 
 void insert(int key, char* value);
 void start_tree(int key, char* value);
@@ -19,6 +21,8 @@ long user_node_count = 0;
 
 int main(int argc, char** argv) {
 
+	struct timeval time_start, time_end;
+	
 	if (argc != 2) {
         fprintf(stderr, "Usage: %s #users\n", argv[0]);
         exit(0);
@@ -31,6 +35,8 @@ int main(int argc, char** argv) {
 	user_table_entry_t* current_user;
 	current_user = (user_table_entry_t *) malloc(sizeof(user_table_entry_t));
 
+	gettimeofday(&start_time, NULL);
+	
 	/* read the first user */
 	if(num_records > 0){
 		read_user_better(0, current_user);
@@ -44,7 +50,10 @@ int main(int argc, char** argv) {
 		sprintf(filename, "../data/sorted_user/0100000/user_%07d.dat", i);
 		insert(current_user->location_id, filename);
 	}
-
+	gettimeofday(&end_time, NULL);
+	float total_time = (time_end.tv_sec - time_start.tv_sec)
+                    + (time_end.tv_usec - time_start.tv_usec) / 1000000.0f;
+	printf("Processing Time: %f\n", total_time);
 	free(current_user);
 	return 0;
 }

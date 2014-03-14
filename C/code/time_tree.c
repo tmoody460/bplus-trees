@@ -4,6 +4,8 @@
 #include "tables.h"
 #include "query_helper.h"
 #include "rw_methods_time.c"
+#include <sys/time.h>
+#include <sys/times.h>
 
 void insert(float key, char* value);
 void start_tree(float key, char* value);
@@ -31,6 +33,9 @@ int main(int argc, char** argv) {
 	time_table_entry_t* current_time;
 	current_time = (time_table_entry_t *) malloc(sizeof(time_table_entry_t));
 
+	struct timeval time_start, time_end;
+	gettimeofday(&start_time, NULL);
+	
 	/* read the first time */
 	if(num_records > 0){
 		read_time_better(0, current_time);
@@ -44,7 +49,11 @@ int main(int argc, char** argv) {
 		sprintf(filename, "times/time_%06d.dat", i);
 		insert(current_time->hour + (current_time->minute/100), filename);
 	}
-
+	gettimeofday(&end_time, NULL);
+	float total_time = (time_end.tv_sec - time_start.tv_sec)
+                    + (time_end.tv_usec - time_start.tv_usec) / 1000000.0f;
+	printf("Processing Time: %f\n", total_time);
+	
 	free(current_time);
 	return 0;
 }
