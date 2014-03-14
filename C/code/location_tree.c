@@ -108,7 +108,7 @@ void get_leaf_for_insert(char* key, char* leaf){
 		}
 		
 		/* binary search array of "length" num_filled */
-		start = 0;
+/*		start = 0;
 		end = current_location_node->num_filled;
 		int found = 0;
 		while(end >= start && found ==FALSE){
@@ -143,7 +143,7 @@ printf("Comparing %s with %s\n", current_location_node->keys[middle], key );
 		}
 		
 		i = start;
-		
+*/		
 		
 		
 		
@@ -170,7 +170,7 @@ void leaf_insert(char* leaf_filename, char* key, char* value){
 	}
 	
 	/* binary search array of "length" num_filled */
-	start = 0;
+/*	start = 0;
 	end = leaf_location_node->num_filled;
 	int found = 0;
 	while(end >= start && found ==FALSE){
@@ -205,7 +205,7 @@ printf("Comparing %s with %s\n", leaf_location_node->keys[middle], key );
 	}
 	
 	j = start;
-	
+*/	
 
 	/* Shift to make space for new key */
 	for(i = leaf_location_node->num_filled - 1; i >= j; i--){

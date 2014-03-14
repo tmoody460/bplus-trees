@@ -107,7 +107,7 @@ void get_leaf_for_insert(int key, char* leaf){
 		
 		
 		/* binary search array of "length" num_filled */
-		start = 0;
+/*		start = 0;
 		end = current_message_node->num_filled;
 		int found = 0;
 		while(end >= start && found ==FALSE){
@@ -142,7 +142,7 @@ printf("Comparing %d with %d\n", current_message_node->keys[middle], key );
 		}
 		
 		i = start;
-		
+*/		
 		
 		
 		
@@ -169,7 +169,7 @@ void leaf_insert(char* leaf_filename, int key, char* value){
 	}
 	
 /* binary search array of "length" num_filled */
-	start = 0;
+/*	start = 0;
 	end = leaf_message_node->num_filled;
 	int found = 0;
 	while(end >= start && found ==FALSE){
@@ -203,7 +203,7 @@ printf("Comparing %d with %d\n", leaf_message_node->keys[middle], key );
 	}
 	
 	j = start;
-	
+*/	
 
 	/* Shift to make space for new key */
 	for(i = leaf_message_node->num_filled - 1; i >= j; i--){
