@@ -142,7 +142,7 @@ printf("Comparing %s with %s\n", current_location_node->keys[middle], key );
 			printf("It worked\n");
 		}
 		
-		//i = start;
+		i = start;
 		
 		
 		
@@ -204,7 +204,7 @@ printf("Comparing %s with %s\n", leaf_location_node->keys[middle], key );
 		printf("It worked\n");
 	}
 	
-	//j = start;
+	j = start;
 	
 
 	/* Shift to make space for new key */
