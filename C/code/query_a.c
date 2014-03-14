@@ -50,7 +50,7 @@ int main(int argc, char **argv)
 
     //Find first node with Nebraska key
     location_node* first_node = (location_node *)malloc(sizeof(location_node));
-   
+ 
     search_location_tree(nebraska, first_node);
 
     //Binary search node for Nebraska key

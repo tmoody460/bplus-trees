@@ -16,7 +16,7 @@ all:
 	g++ -o exec_print_senddate print_senddate.c tables.c
 	g++ -o exec_print_sendtime print_sendtime.c tables.c
 
-#new queries
+#old queries
 phase1_queries:
 	g++ -o phase1_query_a phase1_query_a.c tables.c query_helper.c
 	g++ -o phase1_query_b phase1_query_b.c tables.c query_helper.c
@@ -24,7 +24,14 @@ phase1_queries:
 	g++ -o phase1_query_d phase1_query_d.c tables.c query_helper.c
 
 bplustrees:
+	mkdir ../data/user_tree
+	mkdir ../data/location_tree
+	mkdir ../data/time_tree
+	mkdir ../data/message_tree
 	g++ -o user_tree user_tree.c query_helper.c tables.c
 	g++ -o location_tree location_tree.c query_helper.c tables.c
 	g++ -o time_tree time_tree.c query_helper.c tables.c
 	g++ -o message_tree message_tree.c query_helper.c tables.c
+#new queries
+queries:
+	g++ -o query_a query_a.c tables.c query_helper.c
