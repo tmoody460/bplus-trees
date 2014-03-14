@@ -121,14 +121,14 @@ printf("Comparing %d with %d\n", current_user_node->keys[middle], key );
 				printf("2 if\n");
 				middle = start;
 				found = TRUE;
-			}else if(current_user_node->keys[middle] > key 
-				&& current_user_node->keys[middle-1] <= key){
+			}else if(current_user_node->keys[middle] >= key 
+				&& current_user_node->keys[middle-1] < key){
 				printf("3 if\n");
 				found = TRUE;
-			}else if (current_user_node->keys[middle] <= key){
+			}else if (current_user_node->keys[middle] < key){
 				printf("4 if\n");
 				start = middle + 1;
-			}else if (current_user_node->keys[middle] > key){
+			}else if (current_user_node->keys[middle] >= key){
 				printf("5 if\n");
 				end = middle - 1;
 			}
@@ -163,7 +163,7 @@ void leaf_insert(char* leaf_filename, int key, char* value){
 
 	/* Get the index of the spot where key should be inserted */
 	j = 0;
-	while(j < leaf_user_node->num_filled && leaf_user_node->keys[j] < key){
+	while(j < leaf_user_node->num_filled && leaf_user_node->keys[j] <= key){
 		j++;
 	}
 	
@@ -182,14 +182,14 @@ printf("Comparing %d with %d\n", leaf_user_node->keys[middle], key );
 			printf("2 if\n");
 			middle = start;
 			found = TRUE;
-		}else if(leaf_user_node->keys[middle] >= key 
-			&& leaf_user_node->keys[middle-1] < key){
+		}else if(leaf_user_node->keys[middle] > key 
+			&& leaf_user_node->keys[middle-1] <= key){
 			printf("3 if\n");
 			found = TRUE;
-		}else if (leaf_user_node->keys[middle] < key){
+		}else if (leaf_user_node->keys[middle] <= key){
 			printf("4 if\n");
 			start = middle + 1;
-		}else if (leaf_user_node->keys[middle] >= key){
+		}else if (leaf_user_node->keys[middle] > key){
 			printf("5 if\n");
 			end = middle - 1;
 		}

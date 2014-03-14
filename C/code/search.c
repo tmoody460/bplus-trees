@@ -18,6 +18,15 @@ void search_user_tree(int query, user_node* current) {
 	int beginning, middle, end;
 
 	int query_found = FALSE;
+	
+	while(current->is_leaf == FALSE){
+		beginning = 0;
+		end = current->num_filled - 1;
+		while (beginning <= end){
+			middle = (beginning + end) / 2;
+		}
+	}
+	
 	while(current->is_leaf == FALSE){
 		for(i = 0; i < current->num_filled; i++){
 			if(current->keys[i] >= query){
