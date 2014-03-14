@@ -19,11 +19,11 @@ int nebraska_binary_search(int start, int end, location_node* current_node);
 int binary_search(int key, int start, int end, user_node* current_node);
 int last_binary_search(int key, int start, int end, user_node* current_node);
 
-char* nebraska = "Nebraska";
+char* nebraska = (char *)&"Nebraska";
 
 int main(int argc, char **argv)
 {   
-	
+
     struct timeval time_start, time_end;
     int i = 0;
 
@@ -50,11 +50,11 @@ int main(int argc, char **argv)
 
     //Find first node with Nebraska key
     location_node* first_node = (location_node *)malloc(sizeof(location_node));
+   
+    search_location_tree(nebraska, first_node);
 
-	search_location_tree(nebraska, first_node);
-	printf("poopy\n");
     //Binary search node for Nebraska key
-    key_index = nebraska_binary_search(0, first_node->num_filled, first_node);
+    key_index = nebraska_binary_search(0, first_node->num_filled-1, first_node);
 
     //Binary search will not necessarily give the first Nebraska key 
     while((key_index >= 0) && (found_end == 0)){
@@ -66,14 +66,14 @@ int main(int argc, char **argv)
             key_index++;
         }
     }
-
+ 
     //Access child that has Nebraska key and get locationID
-    sprintf(filename, "locations/%s", first_node->children[key_index-1]);
+    sprintf(filename, "%s", first_node->children[key_index-1]);
+	printf("%s\n", filename);
     fp = fopen(filename,"rb");
     read_location(fp, location_struct);
     int first_Nebraska = location_struct->location_id;
     fclose(fp);
-
     /*End of logic for finding first Nebraska locationId*/
 
     /*Beginning logic for finding last Nebraska locationId */
@@ -98,7 +98,7 @@ int main(int argc, char **argv)
 
         }
         else if(comparison > 0){
-            key_index = nebraska_binary_search(0, current_node->num_filled, current_node);
+            key_index = nebraska_binary_search(0, current_node->num_filled-1, current_node);
             
             //Binary search will not necessarily give the last Nebraska key 
             while((key_index < current_node->num_filled) && (found_end == 0)){
@@ -131,10 +131,10 @@ int main(int argc, char **argv)
     /*Beginning logic for finding first user from Nebraska*/
 
     user_node* first_user_node = (user_node *)malloc(sizeof(user_node));
-	user_node* current_user_node = NULL;
-	search_user_tree(first_Nebraska, first_user_node);
+    user_node* current_user_node = NULL;
+    search_user_tree(first_Nebraska, first_user_node);
 
-    key_index = binary_search(first_Nebraska, 0, first_user_node->num_filled, first_user_node);
+    key_index = binary_search(first_Nebraska, 0, first_user_node->num_filled-1, first_user_node);
 
     //Binary search will not necessarily give the last location key 
     while((key_index >= 0) && (found_end == 0)){
@@ -171,7 +171,7 @@ int main(int argc, char **argv)
             }
         }
         else if(current_user_node->keys[(current_node->num_filled)-2] > last_Nebraska){
-            key_index = last_binary_search(last_Nebraska, 0, current_user_node->num_filled, current_user_node);
+            key_index = last_binary_search(last_Nebraska, 0, current_user_node->num_filled-1, current_user_node);
             
             //Binary search will not necessarily give the last Nebraska key 
             while((key_index < current_user_node->num_filled) && (found_end == 0)){
@@ -201,7 +201,7 @@ int main(int argc, char **argv)
     float totaltime = (time_end.tv_sec - time_start.tv_sec)
                     + (time_end.tv_usec - time_start.tv_usec) / 1000000.0f;
     free(first_node);
-	free(first_user_node);                
+    free(first_user_node);                
  
     printf("\nThere are %d users from Nebraska.", user_count);
     printf("\n\nProcess time %f seconds\n", totaltime);

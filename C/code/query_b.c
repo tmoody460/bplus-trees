@@ -107,7 +107,7 @@ int main(int argc, char **argv)
     search_time_tree(8.0, first_time_node);
 
     //Binary search node for time key
-    key_index = time_binary_search(8.0, 0, first_time_node->num_filled, first_time_node);
+    key_index = time_binary_search(8.0, 0, first_time_node->num_filled-1, first_time_node);
 
     //Access child that has time key and get timeID
     sprintf(filename, "times/%s", first_time_node->children[key_index-1]);
@@ -122,7 +122,7 @@ int main(int argc, char **argv)
     search_time_tree(9.0, first_time_node);
  	
  	//Binary search node for time key
-    key_index = time_binary_search(9.0, 0, first_time_node->num_filled, first_time_node);
+    key_index = time_binary_search(9.0, 0, first_time_node->num_filled-1, first_time_node);
 
     //Access child that has time key and get timeID
     sprintf(filename, "times/%s", first_time_node->children[key_index-1]);
@@ -148,7 +148,7 @@ int main(int argc, char **argv)
 
 	/*Beginning logic for finding number of users who sent message between 8 and 9*/
     if(first_message_node != NULL){
-    	key_index = binary_search(time_key, 0, first_message_node->num_filled, first_message_node);
+    	key_index = binary_search(time_key, 0, first_message_node->num_filled-1, first_message_node);
 
     	//Binary search will not necessarily give the first message 
 	    while((key_index >= 0) && (found_end == 0)){
@@ -232,7 +232,7 @@ int main(int argc, char **argv)
                     + (time_end.tv_usec - time_start.tv_usec) / 1000000.0f;
                     
     free_users(user_head);
-    printf("\nThere are %d users from Nebraska.", user_count);
+    printf("\nThere are %d users who sent messages between 8 and 9.", user_count);
     printf("\n\nProcess time %f seconds\n", totaltime);
     
     return 0;
