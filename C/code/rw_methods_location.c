@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "bp_structs_user.c"
+
 
 void read_node(node* to_read, char* filename) {
 
@@ -17,7 +17,7 @@ void read_node(node* to_read, char* filename) {
 	}
 
 	for(i = 0; i < FAN_OUT - 1; i++) {
-		fread(&(to_read->keys[i]), sizeof(int), 1, fp);
+		fread(&(to_read->keys[i]), sizeof(char), TEXT_SHORT, fp);
 	}
 
 	fread(&(to_read->is_leaf), sizeof(int), 1, fp);
@@ -36,7 +36,7 @@ void write_node(node* to_save) {
 		fwrite(&(to_save->children[i]), sizeof(char), TEXT_SHORT, fp);
 	}
 	for(i = 0; i < FAN_OUT - 1; i++) {
-		fwrite(&(to_save->keys[i]), sizeof(int), 1, fp);
+		fwrite(&(to_save->keys[i]), sizeof(char), TEXT_SHORT, fp);
 	}
 	fwrite(&(to_save->is_leaf), sizeof(int), 1, fp);
 	fwrite(&(to_save->num_filled), sizeof(int), 1, fp);
@@ -55,7 +55,7 @@ void print_node(node* to_print) {
 
 	for(i = 0; i < to_print->num_filled; i++) {
 		if(i < FAN_OUT - 1) {
-			printf("\t%d\n", to_print->keys[i]);
+			printf("\t%s\n", to_print->keys[i]);
 		}
 	}
 

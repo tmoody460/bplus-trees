@@ -1,5 +1,5 @@
 #ifndef __BP_STRUCTS__
-#define __BP_STRUCTS_USER__
+#define __BP_STRUCTS_LOCATION__
 
 #define FAN_OUT 3
 #define NUM_KEYS (FAN_OUT-1)
@@ -14,7 +14,7 @@ typedef struct node {
 	char filename[TEXT_SHORT];
 	char children[FAN_OUT][TEXT_SHORT];
 	char parent[TEXT_SHORT];
-	long keys[NUM_KEYS];
+	char keys[NUM_KEYS][TEXT_SHORT];
 	int is_leaf;
 	int num_filled;
 
