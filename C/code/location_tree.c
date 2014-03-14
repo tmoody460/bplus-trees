@@ -94,7 +94,7 @@ print_location_node(root);
 /* Finds the leaf that the key will be inserted into */
 void get_leaf_for_insert(char* key, char* leaf){
 
-	int i, start, end, mid;
+	int i, start, end, middle;
 	location_node* current_location_node = (location_node*) malloc(sizeof(location_node));
 	fill_location_node(current_location_node);
 	read_location_node(current_location_node, (char*)&LOCATION_ROOT_PATH);
@@ -110,24 +110,36 @@ void get_leaf_for_insert(char* key, char* leaf){
 		/* binary search array of "length" num_filled */
 		start = 0;
 		end = current_location_node->num_filled;
-		while(end > start) {
-			mid = (end - start) / 2;
-			cmp_result = strcmp(current_location_node->keys[mid], key);
-			if(cmp_result > 0) {
-				end = mid - 1;
-			} else if(cmp_result < 0) {
-				start = mid + 1;
-			} else {
-				end = mid;
+		int found = 0;
+		while(end >= start && found ==FALSE){
+			middle = (start + end)/ 2;
+printf("Comparing %s with %s\n", current_location_node->keys[middle], key );
+			cmp_result = strcmp(current_location_node->keys[middle], key);
+			if(middle - 1 < 0 && end == 0){
+			printf("first if\n");
+				middle = 0;
+				found = TRUE;
+			}else if(start == current_location_node->num_filled){
+				printf("2 if\n");
+				middle = start;
+				found = TRUE;
+			}else if(cmp_result > 0 
+				&& strcmp(current_location_node->keys[middle-1], key) <= 0){
+				printf("3 if\n");
+				found = TRUE;
+			}else if (cmp_result <= 0){
+				printf("4 if\n");
+				start = middle + 1;
+			}else if (cmp_result > 0){
+				printf("5 if\n");
+				end = middle - 1;
 			}
 		}
-		cmp_result = strcmp(current_location_node->keys[start], key);
-		if(cmp_result != 0){
-			start = current_location_node->num_filled;
-		}
 		
-		if(i != start) {
-			printf("%d %d i != middle !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n", i, start);
+		if(i != middle) {
+			printf("i: %d  middle: %d !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n", i, middle);
+		}else{
+			printf("It worked\n");
 		}
 		
 		//i = start;
@@ -149,7 +161,7 @@ void leaf_insert(char* leaf_filename, char* key, char* value){
 	fill_location_node(leaf_location_node);
 	read_location_node(leaf_location_node, leaf_filename);
 
-	int i, j, start, end, mid;
+	int i, j, start, end, middle;
 
 	/* Get the index of the spot where key should be inserted */
 	j = 0;
@@ -160,24 +172,36 @@ void leaf_insert(char* leaf_filename, char* key, char* value){
 	/* binary search array of "length" num_filled */
 	start = 0;
 	end = leaf_location_node->num_filled;
-	while(end > start) {
-		mid = (end - start) / 2;
-		cmp_result = strcmp(leaf_location_node->keys[mid], key);
-		if(cmp_result > 0) {
-			end = mid - 1;
-		} else if(cmp_result < 0) {
-			start = mid + 1;
-		} else {
-			end = mid;
+	int found = 0;
+	while(end >= start && found ==FALSE){
+		middle = (start + end)/ 2;
+printf("Comparing %s with %s\n", leaf_location_node->keys[middle], key );
+		cmp_result = strcmp(leaf_location_node->keys[middle], key);
+		if(middle - 1 < 0 && end == 0){
+		printf("first if\n");
+			middle = 0;
+			found = TRUE;
+		}else if(start == leaf_location_node->num_filled){
+			printf("2 if\n");
+			middle = start;
+			found = TRUE;
+		}else if(cmp_result >= 0 
+			&& strcmp(leaf_location_node->keys[middle-1], key) < 0){
+			printf("3 if\n");
+			found = TRUE;
+		}else if (cmp_result < 0){
+			printf("4 if\n");
+			start = middle + 1;
+		}else if (cmp_result >= 0){
+			printf("5 if\n");
+			end = middle - 1;
 		}
 	}
-	cmp_result = strcmp(leaf_location_node->keys[start], key);
-	if(cmp_result != 0){
-		start = leaf_location_node->num_filled;
-	}
-	
-	if(j != start) {
-		printf("j != middle !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
+
+	if(j != middle) {
+		printf("j: %d  middle: %d !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n", j, middle);
+	}else{
+		printf("It worked\n");
 	}
 	
 	//j = start;
