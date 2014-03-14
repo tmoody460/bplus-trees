@@ -96,7 +96,7 @@ void start_tree(char* key, char* value){
 	strncpy(root->keys[0], key, TEXT_SHORT);
 	root->num_filled = 1;
 	write_location_node(root);
-print_location_node(root);
+
 
 	free(root);
 }
@@ -228,7 +228,7 @@ printf("Comparing %s with %s\n", leaf_location_node->keys[middle], key );
 	strncpy(leaf_location_node->children[j], value, TEXT_SHORT);
 	leaf_location_node->num_filled++;
 	write_location_node(leaf_location_node);
-print_location_node(leaf_location_node);
+
 
 	free(leaf_location_node);
 }
@@ -311,8 +311,8 @@ void leaf_insert_and_split(char* leaf_filename, char* key, char* value){
 	/* save before insert_key_into_parent because it depends on these location_nodes */
 	write_location_node(new_leaf);	
 	write_location_node(leaf_location_node);
-print_location_node(new_leaf);
-print_location_node(leaf_location_node);
+
+
 
 	/* copy the key up into the parent */
 	insert_key_into_parent(key_for_parent, leaf_location_node->filename, new_leaf->filename);
@@ -342,7 +342,7 @@ void insert_key_into_parent(char* key, char* old_child, char* new_child) {
 		root->num_filled = 1;
 		strncpy(root->parent, "\0", TEXT_SHORT);
 		root->is_leaf = FALSE;
-printf("cpy 1\n");
+
 		strncpy(root->keys[0], key, TEXT_SHORT);
 
 		sprintf(filename, "../data/location_tree/location_node_%06li.dat", location_node_count);
@@ -354,7 +354,7 @@ printf("cpy 1\n");
 
 		strncpy(old_child_location_node->parent, LOCATION_ROOT_PATH, TEXT_SHORT);
 		strncpy(new_child_location_node->parent, LOCATION_ROOT_PATH, TEXT_SHORT);
-printf("cpy 2\n");
+
 		write_location_node(root);
 		write_location_node(old_child_location_node);
 		write_location_node(new_child_location_node);
@@ -390,13 +390,13 @@ printf("cpy 2\n");
 		/* If parent is not full */
 		if(parent_location_node->num_filled < NUM_KEYS){ 
 			/* Go backwards through the children of the parent, shifting children over */
-printf("cpy 3\n");			
+
 			for (j = parent_location_node->num_filled; j > i; j--)
 			{
 				strncpy(parent_location_node->keys[j], parent_location_node->keys[j-1], TEXT_SHORT);
 				strncpy(parent_location_node->children[j+1], parent_location_node->children[j], TEXT_SHORT);
 			}
-printf("cpy 4\n");
+
 			strncpy(parent_location_node->keys[i], key, TEXT_SHORT);
 			strncpy(parent_location_node->children[i+1], new_child, TEXT_SHORT);
 			parent_location_node->num_filled++;
@@ -405,7 +405,7 @@ printf("cpy 4\n");
 		} else {
 			location_node_insert_and_split(parent_location_node->filename, new_child, key, i);
 		}
-printf("end\n");
+
 		free(parent_location_node);
 	}
 

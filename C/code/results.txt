@@ -8,15 +8,15 @@ Generate User Table:			0.145818	(2000 files)
 Remove Duplicate Users:			0.083623	(2000 files)
 Generate Message Table:			6.772822	(98357 files)
 Sort Messages:	 				8.793256					
-Sort Users:						0.144842
+Sort Users:						0.144842	
 
 Query A:						0.001470	37 users
-Query B:						
-Query C:						
-Query D:						
+Query B:						0.965886	1519 users
+Query C:						0.015895	28 users
+Query D:						0.019655	User 985 with 6 messages
 
-Answers Queries Should Get:
-A:	37 							(18.363054 seconds)
-B:	1509						(0.059006 seconds)
-C:	28							(0.062746 seconds)
-D:	User 985 with 6 messages 	(0.060249 seconds)
+Answers Queries Should Get (from assignment 1):
+A:	37 							
+B:	1519						
+C:	28							
+D:	User 985 with 6 messages 	

@@ -39,15 +39,15 @@ int main(int argc, char** argv) {
 	/* read the first message */
 	if(num_records > 0){
 		read_message_better(0, current_message);
-		sprintf(filename, "messages/message_%06d.dat", 0);
-		start_tree(current_message->location_id, filename);
+		sprintf(filename, "../data/sorted_message/message_%06d.dat", 0);
+		start_tree(current_message->user_id, filename);
 	}
 
 	/* read the rest of the messages */
 	for(i = 1; i < num_records; i++) {
 		read_message_better(i, current_message);
-		sprintf(filename, "messages/message_%06d.dat", i);
-		insert(current_message->location_id, filename);
+		sprintf(filename, "../data/sorted_message/message_%06d.dat", i);
+		insert(current_message->user_id, filename);
 	}
 	gettimeofday(&time_end, NULL);
 	float total_time = (time_end.tv_sec - time_start.tv_sec)

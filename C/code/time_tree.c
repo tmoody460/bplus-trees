@@ -30,23 +30,23 @@ int main(int argc, char** argv) {
 	char filename[TEXT_SHORT];
 	int num_records = atoi(argv[1]);
 
-	time_table_entry_t* current_time;
-	current_time = (time_table_entry_t *) malloc(sizeof(time_table_entry_t));
+	sendtime_table_entry_t* current_time;
+	current_time = (sendtime_table_entry_t *) malloc(sizeof(sendtime_table_entry_t));
 
 	struct timeval time_start, time_end;
 	gettimeofday(&time_start, NULL);
 	
 	/* read the first time */
 	if(num_records > 0){
-		read_time_better(0, current_time);
-		sprintf(filename, "times/time_%06d.dat", 0);
+		read_sendtime_better(0, current_time);
+		sprintf(filename, "../unique_sendtime/sendtime_%06d.dat", 0);
 		start_tree(current_time->hour + (current_time->minute/100), filename);
 	}
 
 	/* read the rest of the times */
 	for(i = 1; i < num_records; i++) {
-		read_time_better(i, current_time);
-		sprintf(filename, "times/time_%06d.dat", i);
+		read_sendtime_better(i, current_time);
+		sprintf(filename, "../unique_sendtime/sendtime_%06d.dat", i);
 		insert(current_time->hour + (current_time->minute/100), filename);
 	}
 	gettimeofday(&time_end, NULL);
