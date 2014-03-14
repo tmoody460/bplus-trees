@@ -1,134 +1,269 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/times.h>
-#include <string.h>
 #include <sys/time.h>
+#include <string.h>
 
 #include "tables.h"
 #include "query_helper.h"
+#include "bp_structs.c"
+#include "search.c"
 
 
 //arguments should be in this order:
 //number of users
 //number of messages
 //number of locations
+//number of date_times
+int nebraska_binary_search(int start, int end, location_node* current_node);
+int binary_search(int key, int start, int end, user_node* current_node);
+int last_binary_search(int key, int start, int end, user_node* current_node);
+
+char* nebraska = "Nebraska";
 
 int main(int argc, char **argv)
 {
-	if (argc < 3){
-		printf("Usage: num_users num_locations\n");
-		exit(0);
-	}
-
     int num_users = atoi(argv[1]);
-	int num_locations = atoi(argv[2]);  
+	int num_messages = atoi(argv[2]);
+	int num_locations = atoi(argv[3]);
+	int num_dates = atoi(argv[4]);
+	int num_times = atoi(argv[5]);   
+	
     struct timeval time_start, time_end;
-    gettimeofday(&time_start, NULL);
+    int i = 0;
 
-    int i;
     int user_count = 0;
 
-	user_table_entry_t* user_read;
-	user_table_entry_t* user_previous;
 
-	location_table_entry_t* location_read;
+    int node_not_found = 0;
 
+    int found_end = 0;
+
+    int key_index;
+
+    /* start time */
+    gettimeofday(&time_start, NULL);
     //start writing here
-    char* nebraska = "Nebraska";
-	int nebraska_start = -1;
-	int nebraska_end = -1;
-    
-    //binary search for locationIds from Nebraska
-    //requires that locations are sorted by state
-	char filename[TEXT_SHORT];
-	FILE *fp = NULL;
-    int first = 0, last = num_locations-1, middle = (first + last)/2;
-	location_read = (location_table_entry_t *)malloc(sizeof(location_table_entry_t));
-	location_table_entry_t* location_previous = (location_table_entry_t *)malloc(sizeof(location_table_entry_t));
-    while (first <= last){
-		read_location_better(middle, location_read);
-		//if the middle is nebraska, linearly go back until we find
-		//the beginning of the nebraska locations
-		if (strcmp(location_read->state, nebraska) == 0){
-			if (nebraska_end < middle){
-				nebraska_end = middle;
-			}
-			read_location_better(middle-1, location_previous);
-		    //if the previous entry is also nebraska, we're not done
-			if (strcmp(location_previous->state, nebraska) < 0){
-				nebraska_start = middle;
-				first = last + 1;	//this will break out of the while
-			} else {
-				last = middle - 1;
-			}
-		}else if (strcmp(location_read->state, nebraska) < 0){
-			first = middle + 1;
-		}else{
-			last = middle - 1;
-		}
-		middle = (first + last)/2;
+
+    char filename[TEXT_SHORT];
+
+    location_table_entry_t* location_struct;
+
+    FILE *fp = NULL;
+
+    /*Beginning logic for finding first Nebraska locationId */
+
+    //Find first node with Nebraska key
+    location_node* first_node = (location_node *)malloc(sizeof(location_node));
+	search_location_tree(nebraska, first_node);
+
+    //Binary search node for Nebraska key
+    key_index = nebraska_binary_search(0, first_node->num_filled, first_node);
+
+    //Binary search will not necessarily give the first Nebraska key 
+    while((key_index >= 0) && (found_end == 0)){
+        if(strstr(first_node->keys[key_index-1], nebraska) != NULL){
+            key_index--;
+        }
+        else{
+            found_end=1;
+            key_index++;
+        }
     }
-	if (nebraska_start  == -1){
-		printf("\nCouldn't find any Nebraska users!\n");
-		exit(0);
-	}
 
-	free(location_previous);
+    //Access child that has Nebraska key and get locationID
+    sprintf(filename, "locations/%s", first_node->children[key_index-1]);
+    fp = fopen(filename,"rb");
+    read_location(fp, location_struct);
+    int first_Nebraska = location_struct->location_id;
+    fclose(fp);
 
-	//get the last nebraksa location_id
-	read_location_better(nebraska_end+1, location_read);
-	while (strcmp(location_read->state, nebraska) == 0){
-		nebraska_end = location_read->location_id;
-		read_location_better(nebraska_end+1, location_read);
-	}
-	free(location_read);
-	
-	//find the users from nebraska
-    user_read = (user_table_entry_t *)malloc(sizeof(user_table_entry_t));
-	user_previous = (user_table_entry_t *)malloc(sizeof(user_table_entry_t));
-	int first_nebraska_user = -1;   
-	first = 0;
-	last = num_users-1;
-	middle = (first + last)/2;
-	while (first <= last){
-		read_user_better(middle, user_read);
-		if (user_read->location_id == nebraska_start){
-			read_user_better(middle-1, user_previous);
-			if (user_previous->location_id != nebraska_start){
-				user_count++;
-				first_nebraska_user = user_read->user_id;
-				first = last + 1;	//break out of the loop
-			}else{
-				last = middle - 1;
-			}
-		}else if (user_read->location_id < nebraska_start){
-			first = middle + 1;
-		}else{
-			last = middle - 1;
-		}
-		middle = (first + last)/2;
-	}
-	if (first_nebraska_user == -1){
-		printf("No users from Nebraska found!\n");
-		exit(0);
-	}
-	read_user_better(first_nebraska_user+1, user_read);
-	while (user_read->location_id <= nebraska_end){
-		user_count++;
-		read_user_better(first_nebraska_user+user_count, user_read);
-	}
+    /*End of logic for finding first Nebraska locationId*/
 
-	free(user_read);
-	        
+    /*Beginning logic for finding last Nebraska locationId */
+
+    location_node* current_node = first_node;
+    location_node* previous_node = NULL;
+    
+    found_end = 0;
+    key_index = -1;
+    while(current_node != NULL && found_end == 0){
+        
+        int comparison = strcmp(current_node->keys[(current_node->num_filled)-2], nebraska);
+
+        if(comparison == 0){
+            previous_node = current_node;
+            if(current_node->keys[FAN_OUT-1] != NULL){
+                read_location_node(current_node, current_node->keys[FAN_OUT-1]);
+            }
+            else{
+                current_node = NULL;
+            }
+
+        }
+        else if(comparison > 0){
+            key_index = nebraska_binary_search(0, current_node->num_filled, current_node);
+            
+            //Binary search will not necessarily give the last Nebraska key 
+            while((key_index < current_node->num_filled) && (found_end == 0)){
+                if(strstr(current_node->keys[key_index+1], nebraska) != NULL){
+                    key_index++;
+                }
+                else{
+                    found_end=1;
+                }
+            }
+        }        
+
+    }
+
+    if(key_index == -1){
+        current_node = previous_node;
+        key_index = current_node->num_filled;
+    }
+
+    sprintf(filename, "locations/%s", current_node->children[key_index-1]);
+    fp = fopen(filename,"rb");
+    read_location(fp, location_struct);
+    int last_Nebraska = location_struct->location_id;
+
+    fclose(fp);
+
+    /*End of logic for finding last Nebraska locationId */
+    
+    
+    /*Beginning logic for finding first user from Nebraska*/
+
+    user_node* first_user_node = (user_node *)malloc(sizeof(user_node));
+	user_node* current_user_node = NULL;
+	search_user_tree(first_Nebraska, first_user_node);
+
+    key_index = binary_search(first_Nebraska, 0, first_user_node->num_filled, first_user_node);
+
+    //Binary search will not necessarily give the last location key 
+    while((key_index >= 0) && (found_end == 0)){
+        if(first_user_node->keys[key_index-1] == first_Nebraska){
+            key_index--;
+        }
+        else{
+            found_end=1;
+            key_index++;
+        }
+    }
+
+    /*End of logic for finding first user from Nebraska*/
+
+    user_count = (FAN_OUT - key_index) + 1;
+
+    /*Beginning logic for finding last user from Nebraska */
+
+    current_user_node = first_user_node;
+    user_node* previous_user_node = NULL;
+    found_end = 0;
+    i = 0;
+    key_index = -1;
+    while(current_user_node != NULL && found_end == 0){
+
+        if(current_user_node->keys[(current_user_node->num_filled)-2] <= last_Nebraska){
+            previous_user_node = current_user_node;
+            if(current_user_node->keys[FAN_OUT-1] != NULL){
+                read_node(current_user_node, current_user_node->keys[FAN_OUT-1]);
+                i++
+            }
+            else{
+                current_user_node = NULL;
+            }
+        }
+        else if(current_user_node->keys[(current_node->num_filled)-2] > last_Nebraska){
+            key_index = last_binary_search(last_Nebraska, 0, current_user_node->num_filled, current_user_node);
+            
+            //Binary search will not necessarily give the last Nebraska key 
+            while((key_index < current_user_node->num_filled) && (found_end == 0)){
+                if(current_user_node->keys[(current_user_node->num_filled)-2] <= last_Nebraska){
+                    key_index++;
+                }
+                else{
+                    found_end=1;
+                }
+            }
+        }        
+
+    }
+
+    if(key_index == -1){
+        key_index = previous_user_node->num_filled;
+    }
+    /*End of logic for finding last user from Nebraska */
+    
+    user_count = user_count + (i*FAN_OUT) + key_index;
+
     //stop writing here    
+    
     /* end time */
     gettimeofday(&time_end, NULL);
     
     float totaltime = (time_end.tv_sec - time_start.tv_sec)
                     + (time_end.tv_usec - time_start.tv_usec) / 1000000.0f;
-                    
+    free(first_node);
+	free(first_user_node);                
+    free_locations(location_head);
     printf("\nThere are %d users from Nebraska.", user_count);
     printf("\n\nProcess time %f seconds\n", totaltime);
     
     return 0;
+}
+
+int nebraska_binary_search(int start, int end, node* current_node){
+
+    int middle = (start + end)/2;
+
+    int comparison = strcmp(current_node->keys[middle], nebraska);
+
+    if(comparison == 0)
+    {
+        return middle;
+    }
+    else{
+        return nebraska_binary_search(start, middle, current_node);
+    }
+   
+   //if it is not found in the whole array
+   return -1;
+
+}
+
+int binary_search(int key, int start, int end, node current_node){
+
+    int middle = (start + end)/2;
+
+    if(current_node->keys[middle] == key)
+    {
+        return middle;
+    }
+    else {
+        if(key > current_node->keys[middle])
+            return binarysearch(key, middle, end, current_node);
+        else
+        if(key < current_node->leys[middle])
+            return binarysearch(key, start, middle, current_node);
+    }
+   //if it is not found in the whole array
+   return -1;
+
+}
+
+int last_binary_search(int key, int start, int end, node current_node){
+
+    int middle = (start + end)/2;
+
+    if(current_node->keys[middle] <= key)
+    {
+        return middle;
+    }
+    else {
+        return binarysearch(key, start, middle, current_node);
+    }
+   //if it is not found in the whole array
+   return -1;
+
 }

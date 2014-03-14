@@ -55,7 +55,7 @@ void print_user_node(user_node* to_print) {
 
 	for(i = 0; i < to_print->num_filled; i++) {
 		if(i < FAN_OUT - 1) {
-			printf("\t%d\n", to_print->keys[i]);
+			printf("\t%li\n", to_print->keys[i]);
 		}
 	}
 
@@ -73,7 +73,7 @@ void print_user_node(user_node* to_print) {
 
 }
 
-void print_tree(char* filename) {
+void print_tree_user(char* filename) {
 	
 	int i;
 
@@ -83,7 +83,7 @@ void print_tree(char* filename) {
 
 	if(current_user_node->is_leaf == FALSE) {
 		for(i = 0; i < current_user_node->num_filled; i++) {
-			print_tree(current_user_node->children[i]);
+			print_tree_user(current_user_node->children[i]);
 		}
 	}
 

@@ -2,245 +2,381 @@
 #include <stdlib.h>
 #include <sys/times.h>
 #include <string.h>
-#include <sys/time.h>
 
-#include "tables.h"
+#include "record.h"
+#include "structures.h"
 #include "query_helper.h"
-
 
 //arguments should be in this order:
 //number of users
 //number of messages
 //number of locations
+//number of date_times
+int nebraska_binary_search(int start, int end, node* current_node);
+int binary_search(int key, int start, int end, node* current_node);
+int last_binary_search(int key, int start, int end, node current_node)
+char* nebraska = "Nebraska";
 
 int main(int argc, char **argv)
 {
-	if (argc < 5){
-		printf("Usage: num_users num_locations num_messages num_sendtimes\n");
-		exit(0);
-	}
-
     int num_users = atoi(argv[1]);
-	int num_locations = atoi(argv[2]);
-	int num_messages = atoi(argv[3]);
-	int num_times = atoi(argv[4]);  
-    struct timeval time_start, time_end;
-    gettimeofday(&time_start, NULL);
-
-    int i;
-    int max_user = -1;
-	int max_messages = -1;
-
-
-	location_table_entry_t* location_read;
-
-    //start writing here
-    char* nebraska = "Nebraska";
-	int nebraska_start = -1;
-	int nebraska_end = -1;
+    int num_messages = atoi(argv[2]);
+    int num_locations = atoi(argv[3]);
+    int num_dates = atoi(argv[4]);
+    int num_times = atoi(argv[5]);   
     
-    //binary search for locationIds from Nebraska
-    //requires that locations are sorted by state
-	char filename[TEXT_SHORT];
-	FILE *fp = NULL;
-    int first = 0, last = num_locations-1, middle = (first + last)/2;
-	location_read = (location_table_entry_t *)malloc(sizeof(location_table_entry_t));
-	location_table_entry_t* location_previous = (location_table_entry_t *)malloc(sizeof(location_table_entry_t));
-    while (first <= last){
-		read_location_better(middle, location_read);
-		//if the middle is nebraska, linearly go back until we find
-		//the beginning of the nebraska locations
-		if (strcmp(location_read->state, nebraska) == 0){
-			if (nebraska_end < middle){
-				nebraska_end = middle;
-			}
-			read_location_better(middle-1, location_previous);
-		    //if the previous entry is also nebraska, we're not done
-			if (strcmp(location_previous->state, nebraska) < 0){
-				nebraska_start = middle;
-				first = last + 1;	//this will break out of the while
-			} else {
-				last = middle - 1;
-			}
-		}else if (strcmp(location_read->state, nebraska) < 0){
-			first = middle + 1;
-		}else{
-			last = middle - 1;
-		}
-		middle = (first + last)/2;
+    struct timeval time_start, time_end;
+    int i;
+
+    int user_count = 0;
+
+    char first_location = NULL;
+    char last_location = NULL;
+    int node_not_found = 0;
+    int i = 0;
+
+    int found_end = 0;
+
+    int key_index;
+
+    user_table_entry_t* user_head=NULL;
+    user_table_entry_t* user_tail;
+    user_table_entry_t* user_current;
+    user_table_entry_t* previous_user;
+    int user_found = 0;
+
+    int found_message;
+    int message_count;
+    int max_count=0;
+    int max_user;
+
+    /* start time */
+    gettimeofday(&time_start, NULL);
+    //start writing here
+
+    char filename[TEXT_SHORT];
+
+    location_table_entry_t* location_struct;
+
+    FILE *fp = NULL;
+
+    /*Beginning logic for finding first Nebraska locationId */
+
+    //Find first node with Nebraska key
+    node* first_node = find_first_Nebraska_node(num_locations, all_locations);
+
+    //Binary search node for Nebraska key
+    key_index = nebraska_binary_search(0, first_node->num_filled, first_node);
+
+    //Binary search will not necessarily give the first Nebraska key 
+    while((key_index >= 0) && (found_end == 0)){
+        if(strcmp(first_node->keys[key_index-1], nebraska) != NULL){
+            key_index--;
+        }
+        else{
+            found_end=1;
+            key_index++;
+        }
     }
-	if (nebraska_start  == -1){
-		printf("\nCouldn't find any Nebraska users!\n");
-		exit(0);
-	}
 
-	free(location_previous);
+    //Access child that has Nebraska key and get locationID
+    sprintf(filename, "locations/%c", first_node->children[key_index-1]);
+    fp = fopen(filename,"rb");
+    read_location(fp, location_struct);
+    int first_Nebraska = location_struct->location_id;
+    fpclose(fp);
 
-	//get the last nebraksa location_id
-	read_location_better(nebraska_end+1, location_read);
-	while (strcmp(location_read->state, nebraska) == 0){
-		nebraska_end = location_read->location_id;
-		read_location_better(nebraska_end+1, location_read);
-	}
+    /*End of logic for finding first Nebraska locationId*/
 
-	free(location_read);
+    /*Beginning logic for finding last Nebraska locationId */
 
-	//binary search timeids
-	int times_start = -1, times_end = -1;
+    node* current_node = first_node;
+    node* previous_node = NULL;
+    
+    found_end = 0;
+    key_index = NULL;
+    while(current_node != NULL && found_end == 0){
+        
+        int comparison = strcmp(current_node->keys[(current_node->num_filled)-2], nebraska)
 
-	first = 0, last = num_times-1, middle = (first + last)/2;
-	sendtime_table_entry_t* time_read = (sendtime_table_entry_t *)malloc(sizeof(sendtime_table_entry_t));
-	sendtime_table_entry_t* time_previous = (sendtime_table_entry_t *)malloc(sizeof(sendtime_table_entry_t));
-	while (first <= last){
-		read_sendtime_better(middle, time_read);
-		if (time_read->hour == 8 || (time_read->hour == 9 && time_read->minute == 0)){
-			if (time_read->sendtime_id > times_end){
-				times_end = time_read->sendtime_id;
-			}
-			read_sendtime_better(middle-1, time_previous);
-			if (time_previous->hour != 8){
-				times_start = middle;
-				first = last + 1;
-			} else {
-				last = middle - 1;
-			}
-		}else if (time_read->hour < 8){
-			first = middle + 1;
-		}else {
-			last = middle - 1;
-		}
-		middle = (first + last)/2;
-	}
-	if (times_start == -1){
-		printf("\nCouldn't find any times!\n");
-		exit(0);
-	}
-	free(time_previous);
-	
-	read_sendtime_better(times_end+1, time_read);
-	while (time_read->hour == 8 || (time_read->hour == 9 && time_read->minute == 0)){
-		times_end++;
-		read_sendtime_better(times_end+1, time_read);
-	}
-	
-	free(time_read);	
+        if(comparison == 0){
+            previous_node = current_node;
+            if(current_node->keys[fan_out-1] != NULL){
+                read_node(current_node, current_node->keys[fan_out-1]);
+            }
+            else{
+                current_node = NULL;
+            }
 
-	//get the first user from nebraska
-    user_table_entry_t *user_read = (user_table_entry_t *)malloc(sizeof(user_table_entry_t));
-	user_table_entry_t *user_previous = (user_table_entry_t *)malloc(sizeof(user_table_entry_t));
-	int first_nebraska_user = -1;   
-	first = 0;
-	last = num_users-1;
-	middle = (first + last)/2;
-	while (first <= last){
-		read_user_better(middle, user_read);
-		if (user_read->location_id == nebraska_start){
-			read_user_better(middle-1, user_previous);
-			if (user_previous->location_id != nebraska_start){
-				//store the filenumber (not user_id)
-				first_nebraska_user = middle;
-				first = last + 1;	//break out of the loop
-			}else{
-				last = middle - 1;
-			}
-		}else if (user_read->location_id < nebraska_start){
-			first = middle + 1;
-		}else{
-			last = middle - 1;
-		}
-		middle = (first + last)/2;
-	}
-	if (first_nebraska_user == -1){
-		printf("No users from Nebraska found!\n");
-		exit(0);
-	}
+        }
+        else if(comparison > 0){
+            key_index = nebraska_binary_search(0, current_node->num_filled, current_node);
+            
+            //Binary search will not necessarily give the last Nebraska key 
+            while((key_index < current_node->num_filled) && (found_end == 0)){
+                if(strcmp(current_node->keys[key_index+1], nebraska) != NULL){
+                    key_index++;
+                }
+                else{
+                    found_end=1;
+                }
+            }
+        }        
 
-	free(user_previous);
+    }
 
-	//start a linked list of users
-	user_query_entry* user_current = (user_query_entry *)malloc(sizeof(user_query_entry));
-	user_current->user.user_id = user_read->user_id;
-	user_current->next = NULL;
-	
-	user_query_entry* user_head = user_current;
-	user_query_entry* user_tail = user_current;
-	
+    if(key_index == NULL){
+        current_node = previous_node;
+        key_index = current_node->num_filled;
+    }
 
-	int read_next= first_nebraska_user+1;
-	read_user_better(read_next, user_read);
-	while (user_read->location_id <= nebraska_end){
-		//add it to the list
-		user_current = (user_query_entry *)malloc(sizeof(user_query_entry));
-		user_current->user.user_id = user_read->user_id;
-		user_tail->next = user_current;
-		user_tail = user_current;
+    sprintf(filename, "locations/%c", current_node->children[key_index-1]);
+    fp = fopen(filename,"rb");
+    read_location(fp, location_struct);
+    int last_Nebraska = location_struct->location_id;
 
-		read_next++;
-		read_user_better(read_next, user_read);
-	}
+    fpclose(fp);
 
-	free(user_read);
+    /*End of logic for finding last Nebraska locationId */
+    
+    
+    /*Beginning logic for creating list of users from Nebraska*/
+    node* first_user = find_user(first_Nebraska);
 
-	//for each user in the list of users, binary search their user id and find their messages
-	//to see if any are between 8 and 9	
-	message_table_entry_t *message_read = (message_table_entry_t *)malloc(sizeof(message_table_entry_t));
-	message_table_entry_t *message_previous = (message_table_entry_t *)malloc(sizeof(message_table_entry_t));
+    key_index = binary_search(first_Nebraska, 0, first_user->num_filled, first_user);
+    
+    found_end = 0;
+    
+    while((key_index >= 0) && (found_end == 0)){
+        if(strcmp(first_node->keys[key_index-1], nebraska) != NULL){
+            key_index--;
+        }
+        else{
+            found_end=1;
+            key_index++;
+        }
+    }
 
-	int user_first_message;
+    current_node = first_user;
 
-	user_current = user_head;
-	while (user_current != NULL){
-		first = 0, last = num_messages-1, middle = (first+last)/2;
-		while (first <= last){
-			read_message_better(middle, message_read);
-			if (message_read->user_id == user_current->user.user_id){
-				read_message_better(middle-1, message_previous);
-				if (message_previous->user_id != user_current->user.user_id){
-					user_first_message = middle;
-					first = last + 1;
-				}else{
-					last = middle-1;
-				}
-			}else if (message_read->user_id < user_current->user.user_id){
-				first = middle+1;
-			}else{
-				last = middle-1;
-			}
-			middle = (first + last)/2;
-		}
-		//for this user, go through their messages to see if they have any between 8 and 9
-		int done = 0;
-		i = 1;
-		int current_messages = 0;
-		while (message_read->user_id == user_current->user.user_id){
-			if (message_read->sendtime_id >= times_start && message_read->sendtime_id <= times_end){
-				current_messages++;
-			}
-			read_message_better(user_first_message + i, message_read);
-			i++;
-		}
-		
-		//check to see if this user is the new max
-		if (current_messages > max_messages){
-			max_user = user_current->user.user_id;
-			max_messages = current_messages;
-		}
-		user_current = user_current->next;
-	}
-	
-	free(message_previous);
-	free(message_read);
-	free_users(user_head);
-	
-	//query logic end
-	/* end time */
+    /*Create list of Nebraska Users*/
+
+    while(last_user_found==0 && current_node != NULL){
+        while(key_index < current_node->num_filled){
+
+            if(current_node->keys[key_index] <= last_Nebraska){
+
+                sprintf(filename, "users/%c", current_node->children[key_index-1]);
+                fp = fopen(filename,"rb");
+                read_user(fp, user_struct);
+
+                user_current = (user_query_entry *)malloc(sizeof(user_query_entry));
+
+                user_current->user.user_id = user_struct->user_id;
+
+                user_current->next = NULL;
+
+                if (user_head == NULL) {
+                  user_head = user_current;
+                  user_tail = user_current;
+                } else {
+                  user_tail->next = user_current;
+                  user_tail = user_current;
+                }
+
+                key_index++;
+            }
+            else{
+                last_user_found = 1;
+                break;
+            }
+        }
+
+        if(last_user_found == 0){
+            read_node(current_node, current_node->children[(current_node->num_filled)-1]);
+            key_index = 0;
+        }
+    }
+
+    /*End of creating list of Nebraska Users*/
+
+    /*Beginning logic for finding first timeId */
+
+    //Find first node with correct time key
+    node* first_node = find_first_time_node(8.0);
+
+    //Binary search node for time key
+    key_index = binary_search(8.0, 0, first_node->num_filled, first_node);
+
+    //Access child that has time key and get timeID
+    sprintf(filename, "times/%c", first_node->children[key_index-1]);
+    fp = fopen(filename,"rb");
+    read_location(fp, time_struct);
+    int first_time = time_struct->time_id;
+    fpclose(fp);
+
+    /*End of logic for finding first timeID*/
+
+    /*Beginning logic for finding last timeID*/
+    first_node = find_first_time_node(9.0);
+    
+    //Binary search node for time key
+    key_index = binary_search(9.0, 0, first_node->num_filled, first_node);
+
+    //Access child that has time key and get timeID
+    sprintf(filename, "times/%c", current_node->children[key_index-1]);
+    fp = fopen(filename,"rb");
+    read_location(fp, time_struct);
+    int last_time = time_struct->time_id;
+
+    fpclose(fp);
+
+    /*End of logic for finding last timeID */
+
+    /*Beginning logic for finding first node with message from Nebraska user*/
+
+    node* first_node = find_first_time_node(first_Nebraska);
+    
+    //Binary search node for Nebraska key
+    key_index = nebraska_binary_search(0, first_node->num_filled, first_node);
+
+    found_end = 0;
+
+    while((key_index >= 0) && (found_end == 0)){
+        if(strcmp(first_node->keys[key_index-1], nebraska) != NULL){
+            key_index--;
+        }
+        else{
+            found_end=1;
+            key_index++;
+        }
+    }
+    /*End logic for finding first node with message sent between 8 and 9*/
+
+    /*Beginning logic for finding max number of messages sent between 8 and 9 from Nebraska users */
+    
+    user_current = user_head;
+
+    while(user_current ! = NULL){
+
+        first_node = find_first_message(user_current->user.user_id);
+
+        key_index = binary_search(user_current->user.user_id, 0, first_user->num_filled, first_user);
+
+        while((key_index >= 0) && (found_end == 0)){
+            if(first_node->keys[key_index-1] == user_current->user.user_id){
+                key_index--;
+            }
+            else{
+                found_end=1;
+                key_index++;
+            }
+        }
+
+        message_count = 0;
+
+        while(current_node->keys[key_index] < num_filled && current_node->keys[key_index]==user_current->user.user_id){
+
+            //Read message and find userId
+            sprintf(filename, "messages/%c", current_node->children[key_index]);
+            fp = fopen(filename,"rb");
+            read_message(fp, message_struct);
+
+            if(message_struct->time_id >= first_time && message_struct->time_id <= last_time){
+                message_count++;
+            }
+            key_index++;
+
+            if(key_index == current_node->num_filled){
+                
+                if(current_node->children[(current_node->num_filled)-1] != NULL){
+                    read(current_node, current_node->children[(current_node->num_filled)-1]);
+                    key_index= 0;
+                }
+                else{
+                    break;
+                }
+
+            }
+
+        }
+
+        if(max_count < message_count){
+            max_user = user_current->user.user_id;
+            max_count = message_count;
+        }
+
+        user_current = user_current->next;
+    }
+
+    /*End logic for finding max number of messages sent between 8 and 9 from Nebraska users */
+    
+    /* end time */
     gettimeofday(&time_end, NULL);
     
     float totaltime = (time_end.tv_sec - time_start.tv_sec)
                     + (time_end.tv_usec - time_start.tv_usec) / 1000000.0f;
                     
-    printf("\nUser %d from Nebraska had %d messages\n", max_user, max_messages);
+    free_locations(location_head);
+    printf("\nThere are %d users from Nebraska.", user_count);
     printf("\n\nProcess time %f seconds\n", totaltime);
     
+    free_users(user_head);
+
     return 0;
+}
+
+int nebraska_binary_search(int start, int end, node* current_node){
+
+    int middle = (start + end)/2;
+
+    int comparison = strcmp(current_node->keys[middle], nebraska);
+
+    if(comparison == 0)
+    {
+        return current_node->children[middle];
+    }
+    else{
+        return binarysearch(key, start, middle, current_node);
+    }
+   
+   //if it is not found in the whole array
+   return -1;
+
+}
+
+int binary_search(int key, int start, int end, node current_node){
+
+    int middle = (start + end)/2;
+
+    if(current_node->keys[middle] == key)
+    {
+        return middle;
+    }
+    else {
+        if(key > current_node->keys[middle])
+            return binarysearch(key, middle, end, current_node);
+        else
+        if(key < current_node->leys[middle])
+            return binarysearch(key, start, middle, current_node);
+    }
+   //if it is not found in the whole array
+   return -1;
+
+}
+
+int last_binary_search(int key, int start, int end, node current_node){
+
+    int middle = (start + end)/2;
+
+    if(current_node->keys[middle] <= key)
+    {
+        return middle;
+    }
+    else {
+        return binarysearch(key, start, middle, current_node);
+    }
+   //if it is not found in the whole array
+   return -1;
+
 }

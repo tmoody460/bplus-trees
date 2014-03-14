@@ -38,9 +38,9 @@ void search_user_tree(int query, user_node* current) {
 			end = middle;
 		}
 	}
-	if(current->keys[start] != query){
+	if(current->keys[beginning] != query){
 		if(query_found){
-			read_user_node(current, current[FAN_OUT-1]);
+			read_user_node(current, current->children[FAN_OUT-1]);
 		}else{
 			current = NULL;
 		}
@@ -72,7 +72,7 @@ void search_location_tree(char* query, location_node* current) {
 	end = current->num_filled - 1;
 	while(beginning < end){
 		middle = (beginning + end) / 2;
-		cmp_result = strcmp(current->keys[middle], query));
+		cmp_result = strcmp(current->keys[middle], query);
 		if (cmp_result > 0){
 			end = middle - 1;
 		}else if (cmp_result < 0){
@@ -81,9 +81,9 @@ void search_location_tree(char* query, location_node* current) {
 			end = middle;
 		}
 	}
-	if(strcmp(current->keys[middle], query)) != 0){
+	if(strcmp(current->keys[middle], query) != 0){
 		if(query_found){
-			read_location_node(current, current[FAN_OUT-1]);
+			read_location_node(current, current->children[FAN_OUT-1]);
 		}else{
 			current = NULL;
 		}
