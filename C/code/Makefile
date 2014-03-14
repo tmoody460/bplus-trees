@@ -19,10 +19,18 @@ all:
 clean:
 	rm exec0_generate_location exec1_unique_location exec2_generate_senddatetime exec3_unique_senddatetime \
 	exec4_generate_user exec5_unique_user exec6_generate_message exec7_sort_message exec8_sort_senddatetime \
-	exec9_sort_user exec_print_record exec_print_user exec_print_location exec_print_message exec_print_senddatetime
+	exec9_sort_user exec_print_record exec_print_user exec_print_location exec_print_message exec_print_senddatetime \
+	user_tree location_tree time_tree message_tree
 
+#new queries
 queries:
 	g++ -o query_a query_a.c tables.c query_helper.c
 	g++ -o query_b query_b.c tables.c query_helper.c
 	g++ -o query_c query_c.c tables.c query_helper.c
 	g++ -o query_d query_d.c tables.c query_helper.c
+
+bplustrees:
+	g++ -o user_tree user_tree.c query_helper.c tables.c
+	g++ -o location_tree location_tree.c query_helper.c tables.c
+	g++ -o time_tree time_tree.c query_helper.c tables.c
+	g++ -o message_tree message_tree.c query_helper.c tables.c
