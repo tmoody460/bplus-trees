@@ -5,7 +5,7 @@
 
 
 void read_node(node* to_read, char* filename) {
-printf("reading node: %s\n", filename);
+
 	int i;
 	FILE *fp = NULL;
 	fp = fopen(filename, "rb");
@@ -18,7 +18,7 @@ printf("reading node: %s\n", filename);
 	}
 
 	for(i = 0; i < FAN_OUT - 1; i++) {
-		fread(&(to_read->keys[i]), sizeof(long), 1, fp);
+		fread(&(to_read->keys[i]), sizeof(int), 1, fp);
 	}
 
 	fread(&(to_read->is_leaf), sizeof(int), 1, fp);
@@ -37,7 +37,7 @@ void write_node(node* to_save) {
 		fwrite(&(to_save->children[i]), sizeof(char), TEXT_SHORT, fp);
 	}
 	for(i = 0; i < FAN_OUT - 1; i++) {
-		fwrite(&(to_save->keys[i]), sizeof(long), 1, fp);
+		fwrite(&(to_save->keys[i]), sizeof(int), 1, fp);
 	}
 	fwrite(&(to_save->is_leaf), sizeof(int), 1, fp);
 	fwrite(&(to_save->num_filled), sizeof(int), 1, fp);
@@ -56,7 +56,7 @@ void print_node(node* to_print) {
 
 	for(i = 0; i < to_print->num_filled; i++) {
 		if(i < FAN_OUT - 1) {
-			printf("\t%li\n", to_print->keys[i]);
+			printf("\t%d\n", to_print->keys[i]);
 		}
 	}
 

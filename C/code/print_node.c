@@ -1,7 +1,6 @@
 #include "bp_structs.c"
-#include "structures.h"
 #include <string.h>
-#include "rw_methods.c"
+#include "new_rw_methods.c"
 
 #define TRUE 1
 #define FALSE 0
@@ -9,7 +8,6 @@
 
 int main(int argc, char** argv) {
 
-	//http://dblab.cs.toronto.edu/courses/443/2014/05.btree-index.html
 	if(argc != 2) {
 		fprintf(stderr, "Usage: %s node_file", argv[0]);
 		exit(0);
