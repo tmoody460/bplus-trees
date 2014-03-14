@@ -8,8 +8,6 @@ all:
 	g++ -o exec5_unique_user step5_unique_user_table.c tables.c
 	g++ -o exec6_generate_message step6_generate_message_table.c tables.c
 	g++ -o exec7_sort_message step7_sort_message_table.c tables.c
-	g++ -o exec8_sort_senddate step8_sort_senddate_table.c tables.c
-	g++ -o exec8h_sort_sendtime step8h_sort_sendtime_table.c tables.c
 	g++ -o exec9_sort_user step9_sort_user_table.c tables.c
 	g++ -o exec_print_record print_record.c record.c
 	g++ -o exec_print_user print_user.c tables.c
