@@ -20,18 +20,28 @@ void search_user_tree(int query, user_node* current) {
 	int query_found = FALSE;
 	while(current->is_leaf == FALSE){
 		for(i = 0; i < current->num_filled; i++){
-			if(current->keys[i] < query){
+			if(current->keys[i] => query){
+				if(current->keys[i] == query){
+					query_found = TRUE;
+				}
 				read_user_node(current, current->children[i]);
-			}else if(current->keys[i] == query){
-				query_found = TRUE;
+				break;
 			}
 		}
 		if (i == current->num_filled){
 			read_user_node(current, current->children[i]);
 		}
 	}
+	i=0;
+	for(current->keys[i] != query && i < current->num_filled){
+		i++
+	}
+	if(i == current->num_filled){
+		read_user_node(current, current->children[FAN_OUT-1];
+	}
 	
-	beginning = 0;
+	
+/*	beginning = 0;
 	end = current->num_filled - 1;
 	while(beginning < end){
 		middle = (beginning + end) / 2;
@@ -49,7 +59,7 @@ void search_user_tree(int query, user_node* current) {
 		}else{
 			current = NULL;
 		}
-	}
+	}*/
 }
 
 void search_location_tree(char* query, location_node* current) {
@@ -57,44 +67,31 @@ void search_location_tree(char* query, location_node* current) {
 	int cmp_result = -1;
 	
 	read_location_node(current, LOCATION_ROOT_PATH);
-
 	int beginning, middle, end;
 
 	int query_found = FALSE;
 	while(current->is_leaf == FALSE){
 		for(i = 0; i < current->num_filled; i++){
-			printf("notehu\n");
 			cmp_result = strcmp(current->keys[i], query);
-			if(cmp_result < 0){
+			if(cmp_result => 0){
+				if(cmp_result == 0){
+					query_found = TRUE;
+				}
 				read_location_node(current, current->children[i]);
-			}else if(cmp_result == 0){
-				query_found = TRUE;
+				break;
 			}
 		}
 		if (i == current->num_filled){
 			read_location_node(current, current->children[i]);
 		}
 	}
-	
-	beginning = 0;
-	end = current->num_filled - 1;
-	while(beginning < end){
-		middle = (beginning + end) / 2;
-		cmp_result = strcmp(current->keys[middle], query);
-		if (cmp_result > 0){
-			end = middle - 1;
-		}else if (cmp_result < 0){
-			beginning = middle + 1;
-		}else{
-			end = middle;
-		}
+	i=0;
+	cmp_result = strcmp(current->keys[i], query);
+	for(cmp_result != 0 && i < current->num_filled){
+		i++
 	}
-	if(strcmp(current->keys[middle], query) != 0){
-		if(query_found){
-			read_location_node(current, current->children[FAN_OUT-1]);
-		}else{
-			current = NULL;
-		}
+	if(i == current->num_filled){
+		read_location_node(current, current->children[FAN_OUT-1];
 	}
 }
 
