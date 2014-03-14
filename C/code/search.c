@@ -145,7 +145,7 @@ void search_time_tree(float query, time_node* current) {
 	int i = 0;
 	int cmp_result = -1;
 
-	read_message_node(current, MESSAGE_ROOT_PATH);
+	read_time_node(current, MESSAGE_ROOT_PATH);
 
 	int beginning, middle, end;
 

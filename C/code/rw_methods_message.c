@@ -55,7 +55,7 @@ void print_message_node(message_node* to_print) {
 
 	for(i = 0; i < to_print->num_filled; i++) {
 		if(i < FAN_OUT - 1) {
-			printf("\t%li\n", to_print->keys[i]);
+			printf("\t%d\n", to_print->keys[i]);
 		}
 	}
 

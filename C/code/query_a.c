@@ -10,66 +10,20 @@
 #include "search.c"
 
 
-int nebraska_binary_search(int start, int end, location_node* current_node){
-
-    int middle = (start + end)/2;
-
-    int comparison = strcmp(current_node->keys[middle], nebraska);
-
-    if(comparison == 0)
-    {
-        return middle;
-    }
-    else{
-        return nebraska_binary_search(start, middle, current_node);
-    }
-   
-   //if it is not found in the whole array
-   return -1;
-
-}
-
-int binary_search(int key, int start, int end, user_node* current_node){
-
-    int middle = (start + end)/2;
-
-    if(current_node->keys[middle] == key)
-    {
-        return middle;
-    }
-    else {
-        if(key > current_node->keys[middle])
-            return binary_search(key, middle, end, current_node);
-        else
-        if(key < current_node->keys[middle])
-            return binary_search(key, start, middle, current_node);
-    }
-   //if it is not found in the whole array
-   return -1;
-
-}
-
-int last_binary_search(int key, int start, int end, user_node* current_node){
-
-    int middle = (start + end)/2;
-
-    if(current_node->keys[middle] <= key)
-    {
-        return middle;
-    }
-    else {
-        return last_binary_search(key, start, middle, current_node);
-    }
-   //if it is not found in the whole array
-   return -1;
-
-}
+//arguments should be in this order:
+//number of users
+//number of messages
+//number of locations
+//number of date_times
+int nebraska_binary_search(int start, int end, location_node* current_node);
+int binary_search(int key, int start, int end, user_node* current_node);
+int last_binary_search(int key, int start, int end, user_node* current_node);
 
 char* nebraska = "Nebraska";
 
 int main(int argc, char **argv)
 {   
-	printf("\nsntoheusntoheu\n");
+	
     struct timeval time_start, time_end;
     int i = 0;
 
@@ -98,7 +52,7 @@ int main(int argc, char **argv)
     location_node* first_node = (location_node *)malloc(sizeof(location_node));
 
 	search_location_tree(nebraska, first_node);
-
+	printf("poopy\n");
     //Binary search node for Nebraska key
     key_index = nebraska_binary_search(0, first_node->num_filled, first_node);
 
@@ -158,7 +112,6 @@ int main(int argc, char **argv)
         }        
 
     }
-
 
     if(key_index == -1){
         current_node = previous_node;
@@ -256,4 +209,57 @@ int main(int argc, char **argv)
     return 0;
 }
 
+int nebraska_binary_search(int start, int end, location_node* current_node){
 
+    int middle = (start + end)/2;
+
+    int comparison = strcmp(current_node->keys[middle], nebraska);
+
+    if(comparison == 0)
+    {
+        return middle;
+    }
+    else{
+        return nebraska_binary_search(start, middle, current_node);
+    }
+   
+   //if it is not found in the whole array
+   return -1;
+
+}
+
+int binary_search(int key, int start, int end, user_node* current_node){
+
+    int middle = (start + end)/2;
+
+    if(current_node->keys[middle] == key)
+    {
+        return middle;
+    }
+    else {
+        if(key > current_node->keys[middle])
+            return binary_search(key, middle, end, current_node);
+        else
+        if(key < current_node->keys[middle])
+            return binary_search(key, start, middle, current_node);
+    }
+   //if it is not found in the whole array
+   return -1;
+
+}
+
+int last_binary_search(int key, int start, int end, user_node* current_node){
+
+    int middle = (start + end)/2;
+
+    if(current_node->keys[middle] <= key)
+    {
+        return middle;
+    }
+    else {
+        return last_binary_search(key, start, middle, current_node);
+    }
+   //if it is not found in the whole array
+   return -1;
+
+}

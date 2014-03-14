@@ -56,7 +56,7 @@ void print_time_node(time_node* to_print) {
 	for(i = 0; i < to_print->num_filled; i++) {
 		if(i < FAN_OUT - 1) {
 			printf("Change the thingy to float\n");
-			printf("\t%li\n", to_print->keys[i]);
+			printf("\t%f\n", to_print->keys[i]);
 		}
 	}
 
