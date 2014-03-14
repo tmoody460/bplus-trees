@@ -35,14 +35,14 @@ int main(int argc, char** argv) {
 	/* read the first location */
 	if(num_records > 0){
 		read_location_better(0, current_location);
-		sprintf(filename, "locations/location_%06d.dat", 0);
+		sprintf(filename, "../data/unique_location/0100000/location_%07d.dat", 0);
 		start_tree(current_location->state, filename);
 	}
 
 	/* read the rest of the locations */
 	for(i = 1; i < num_records; i++) {
 		read_location_better(i, current_location);
-		sprintf(filename, "locations/location_%06d.dat", i);
+		sprintf(filename, "../data/unique_location/0100000/location_%07d.dat", i);
 		insert(current_location->state, filename);
 	}
 

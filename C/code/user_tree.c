@@ -34,14 +34,14 @@ int main(int argc, char** argv) {
 	/* read the first user */
 	if(num_records > 0){
 		read_user_better(0, current_user);
-		sprintf(filename, "users/user_%06d.dat", 0);
+		sprintf(filename, "../data/sorted_user/0100000/user_%07d.dat", 0);
 		start_tree(current_user->location_id, filename);
 	}
 
 	/* read the rest of the users */
 	for(i = 1; i < num_records; i++) {
 		read_user_better(i, current_user);
-		sprintf(filename, "users/user_%06d.dat", i);
+		sprintf(filename, "../data/sorted_user/0100000/user_%07d.dat", i);
 		insert(current_user->location_id, filename);
 	}
 
