@@ -163,7 +163,7 @@ void leaf_insert(char* leaf_filename, float key, char* value){
 
 	/* Get the index of the spot where key should be inserted */
 	j = 0;
-	while(j < leaf_time_node->num_filled && leaf_time_node->keys[j] < key){
+	while(j < leaf_time_node->num_filled && leaf_time_node->keys[j] <= key){
 		j++;
 	}
 	
@@ -182,14 +182,14 @@ printf("Comparing %d with %d\n", leaf_time_node->keys[middle], key );
 			printf("2 if\n");
 			middle = start;
 			found = TRUE;
-		}else if(leaf_time_node->keys[middle] >= key 
-			&& leaf_time_node->keys[middle-1] < key){
+		}else if(leaf_time_node->keys[middle] > key 
+			&& leaf_time_node->keys[middle-1] <= key){
 			printf("3 if\n");
 			found = TRUE;
-		}else if (leaf_time_node->keys[middle] < key){
+		}else if (leaf_time_node->keys[middle] <= key){
 			printf("4 if\n");
 			start = middle + 1;
-		}else if (leaf_time_node->keys[middle] >= key){
+		}else if (leaf_time_node->keys[middle] > key){
 			printf("5 if\n");
 			end = middle - 1;
 		}
