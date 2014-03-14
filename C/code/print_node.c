@@ -1,10 +1,9 @@
-#include "bp_structs.c"
+#include "bp_structs_user.c"
 #include <string.h>
-#include "new_rw_methods.c"
+#include "rw_methods_user.c"
 
 #define TRUE 1
 #define FALSE 0
-#define ROOT_PATH "user_tree/root.dat"
 
 int main(int argc, char** argv) {
 
