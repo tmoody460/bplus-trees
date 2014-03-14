@@ -14,6 +14,7 @@ void search_user_tree(int query, user_node* current) {
 	int i = 0;
 	int cmp_result = -1;
 	
+	read_user_node(current, USER_ROOT_PATH);
 	int beginning, middle, end;
 
 	int query_found = FALSE;
@@ -55,6 +56,8 @@ void search_location_tree(char* query, location_node* current) {
 	int i = 0;
 	int cmp_result = -1;
 	
+	read_location_node(current, LOCATION_ROOT_PATH);
+
 	int beginning, middle, end;
 
 	int query_found = FALSE;
@@ -97,6 +100,8 @@ void search_location_tree(char* query, location_node* current) {
 void search_message_tree(int query, message_node* current) {
 	int i = 0;
 	int cmp_result = -1;
+
+	read_message_node(current, MESSAGE_ROOT_PATH);
 	
 	int beginning, middle, end;
 
@@ -138,7 +143,9 @@ void search_message_tree(int query, message_node* current) {
 void search_time_tree(float query, time_node* current) {
 	int i = 0;
 	int cmp_result = -1;
-	
+
+	read_message_node(current, MESSAGE_ROOT_PATH);
+
 	int beginning, middle, end;
 
 	int query_found = FALSE;
