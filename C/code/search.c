@@ -33,11 +33,11 @@ void search_user_tree(int query, user_node* current) {
 		}
 	}
 	i=0;
-	for(current->keys[i] != query && i < current->num_filled){
-		i++
+	while(current->keys[i] != query && i < current->num_filled){
+		i++;
 	}
 	if(i == current->num_filled){
-		read_user_node(current, current->children[FAN_OUT-1];
+		read_user_node(current, current->children[FAN_OUT-1]);
 	}
 	
 	
@@ -87,11 +87,11 @@ void search_location_tree(char* query, location_node* current) {
 	}
 	i=0;
 	cmp_result = strcmp(current->keys[i], query);
-	for(cmp_result != 0 && i < current->num_filled){
-		i++
+	while(cmp_result != 0 && i < current->num_filled){
+		i++;
 	}
 	if(i == current->num_filled){
-		read_location_node(current, current->children[FAN_OUT-1];
+		read_location_node(current, current->children[FAN_OUT-1]);
 	}
 }
 
@@ -99,7 +99,7 @@ void search_message_tree(int query, message_node* current) {
 	int i = 0;
 	int cmp_result = -1;
 
-	read_message_node(current, MESSAGE_ROOT_PATH);
+	read_message_node(current, (char *)&MESSAGE_ROOT_PATH);
 	
 	int beginning, middle, end;
 
