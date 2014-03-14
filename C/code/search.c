@@ -56,6 +56,7 @@ void search_location_tree(char* query, location_node* current) {
 	int query_found = FALSE;
 	while(current->is_leaf == FALSE){
 		for(i = 0; i < current->num_filled; i++){
+			printf("notehu\n");
 			cmp_result = strcmp(current->keys[i], query);
 			if(cmp_result < 0){
 				read_location_node(current, current->children[i]);
