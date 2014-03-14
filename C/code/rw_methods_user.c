@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "bp_structs_user.c"
+#include "bp_structs.c"
 
-void read_node(node* to_read, char* filename) {
+void read_user_node(user_node* to_read, char* filename) {
 
 	int i;
 	FILE *fp = NULL;
@@ -27,7 +27,7 @@ void read_node(node* to_read, char* filename) {
 	fclose(fp);	
 }
 
-void write_node(node* to_save) {
+void write_user_node(user_node* to_save) {
 	int i;
 	FILE *fp = NULL;
 	fp = fopen(to_save->filename, "w");
@@ -44,10 +44,10 @@ void write_node(node* to_save) {
 	fclose(fp);
 }
 
-void print_node(node* to_print) {
+void print_user_node(user_node* to_print) {
 	int i;
 
-	printf("Node: %s\n", to_print->filename);
+	printf("user_node: %s\n", to_print->filename);
 
 	for(i = 0; i < to_print->num_filled; i++) {
 		printf("\t%s\n", to_print->children[i]);
@@ -77,15 +77,15 @@ void print_tree(char* filename) {
 	
 	int i;
 
-	node* current_node = (node*) malloc(sizeof(node));
-	read_node(current_node, filename);
-	print_node(current_node);
+	user_node* current_user_node = (user_node*) malloc(sizeof(user_node));
+	read_user_node(current_user_node, filename);
+	print_user_node(current_user_node);
 
-	if(current_node->is_leaf == FALSE) {
-		for(i = 0; i < current_node->num_filled; i++) {
-			print_tree(current_node->children[i]);
+	if(current_user_node->is_leaf == FALSE) {
+		for(i = 0; i < current_user_node->num_filled; i++) {
+			print_tree(current_user_node->children[i]);
 		}
 	}
 
-	free(current_node);
+	free(current_user_node);
 }

@@ -3,7 +3,7 @@
 #include <string.h>
 
 
-void read_node(node* to_read, char* filename) {
+void read_location_node(location_node* to_read, char* filename) {
 
 	int i;
 	FILE *fp = NULL;
@@ -27,7 +27,7 @@ void read_node(node* to_read, char* filename) {
 	fclose(fp);	
 }
 
-void write_node(node* to_save) {
+void write_location_node(location_node* to_save) {
 	int i;
 	FILE *fp = NULL;
 	fp = fopen(to_save->filename, "w");
@@ -44,10 +44,10 @@ void write_node(node* to_save) {
 	fclose(fp);
 }
 
-void print_node(node* to_print) {
+void print_location_node(location_node* to_print) {
 	int i;
 
-	printf("Node: %s\n", to_print->filename);
+	printf("location_node: %s\n", to_print->filename);
 
 	for(i = 0; i < to_print->num_filled; i++) {
 		printf("\t%s\n", to_print->children[i]);
@@ -77,15 +77,15 @@ void print_tree(char* filename) {
 	
 	int i;
 
-	node* current_node = (node*) malloc(sizeof(node));
-	read_node(current_node, filename);
-	print_node(current_node);
+	location_node* current_location_node = (location_node*) malloc(sizeof(location_node));
+	read_location_node(current_location_node, filename);
+	print_location_node(current_location_node);
 
-	if(current_node->is_leaf == FALSE) {
-		for(i = 0; i < current_node->num_filled; i++) {
-			print_tree(current_node->children[i]);
+	if(current_location_node->is_leaf == FALSE) {
+		for(i = 0; i < current_location_node->num_filled; i++) {
+			print_tree(current_location_node->children[i]);
 		}
 	}
 
-	free(current_node);
+	free(current_location_node);
 }

@@ -1,22 +1,53 @@
-#include "bp_structs_user.c"
+#include "bp_structs.c"
 #include <string.h>
 #include "rw_methods_user.c"
+#include "rw_methods_location.c"
 
-void search_location_tree(char* query, node* current);
+void search_location_tree(char* query, location_node* current);
+void search_user_tree(char* query, user_node* current);
 
-int main() {
+void search_user_tree(int query, user_node* current) {
+	int i = 0;
+	int cmp_result = -1;
+	
+	int beginning, middle, end;
 
-	node* current = (node *) malloc(sizeof(node));
-	read_node(current, (char*)&ROOT_PATH);
-
-	search_location_tree((char*)&"Nebraska", current);
-
-	free(current);
-
-	return 0;
+	int query_found = FALSE;
+	while(current->is_leaf == FALSE){
+		for(i = 0; i < current->num_filled; i++){
+			if(current->keys[i] < query){
+				read_user_node(current, current->children[i]);
+			}else if(current->keys[i] == query){
+				query_found = TRUE;
+			}
+		}
+		if (i == current->num_filled){
+			read_user_node(current, current->children[i]);
+		}
+	}
+	
+	beginning = 0;
+	end = current->num_filled - 1;
+	while(beginning < end){
+		middle = (beginning + end) / 2;
+		if (current->keys[middle] > query){
+			end = middle - 1;
+		}else if (current->keys[middle] < query){
+			beginning = middle + 1;
+		}else{
+			end = middle;
+		}
+	}
+	if(current->keys[start] != query){
+		if(query_found){
+			read_user_node(current, current[FAN_OUT-1]);
+		}else{
+			current = NULL;
+		}
+	}
 }
 
-void search_location_tree(char* query, node* current) {
+void search_location_tree(char* query, location_node* current) {
 	int i = 0;
 	int cmp_result = -1;
 	
@@ -27,13 +58,13 @@ void search_location_tree(char* query, node* current) {
 		for(i = 0; i < current->num_filled; i++){
 			cmp_result = strcmp(current->keys[i], query);
 			if(cmp_result < 0){
-				read_node(current, current->children[i]);
+				read_location_node(current, current->children[i]);
 			}else if(cmp_result == 0){
 				query_found = TRUE;
 			}
 		}
 		if (i == current->num_filled){
-			read_node(current, current->children[i]);
+			read_location_node(current, current->children[i]);
 		}
 	}
 	
@@ -52,7 +83,7 @@ void search_location_tree(char* query, node* current) {
 	}
 	if(strcmp(current->keys[middle], query)) != 0){
 		if(query_found){
-			read_node(current, current[FAN_OUT-1]);
+			read_location_node(current, current[FAN_OUT-1]);
 		}else{
 			current = NULL;
 		}
