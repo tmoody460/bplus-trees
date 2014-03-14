@@ -108,23 +108,36 @@ void get_leaf_for_insert(int key, char* leaf){
 		/* binary search array of "length" num_filled */
 		start = 0;
 		end = current_user_node->num_filled;
-		while(end > start) {
-			mid = (end - start) / 2;
-			if(current_user_node->keys[mid] > key) {
-				end = mid - 1;
-			} else if(current_user_node->keys[mid] < key) {
-				start = mid + 1;
-			} else {
-				end = mid;
+		int found = 0;
+		while(end >= start && found ==FALSE){
+			middle = (start + end)/ 2;
+printf("Comparing %d with %d\n", current_user_node->keys[middle], key );
+			
+			if(middle - 1 < 0 && end == 0){
+			printf("first if\n");
+				middle = 0;
+				found = TRUE;
+			}else if(start == current_user_node->num_filled){
+				printf("2 if\n");
+				middle = start;
+				found = TRUE;
+			}else if(current_user_node->keys[middle] > key 
+				&& current_user_node->keys[middle-1] <= key){
+				printf("3 if\n");
+				found = TRUE;
+			}else if (current_user_node->keys[middle] <= key){
+				printf("4 if\n");
+				start = middle + 1;
+			}else if (current_user_node->keys[middle] > key){
+				printf("5 if\n");
+				end = middle - 1;
 			}
 		}
 		
-		if(current_user_node->keys[start] != key){
-			start = current_user_node->num_filled;
-		}
-		
-		if(i != start) {
-			printf("i != middle !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
+		if(i != middle) {
+			printf("i: %d  middle: %d !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n", i, middle);
+		}else{
+			printf("It worked\n");
 		}
 		
 		i = start;
@@ -154,26 +167,38 @@ void leaf_insert(char* leaf_filename, int key, char* value){
 		j++;
 	}
 	
-	/* binary search array of "length" num_filled */
+/* binary search array of "length" num_filled */
 	start = 0;
 	end = leaf_user_node->num_filled;
-	while(end > start) {
-		mid = (end - start) / 2;
-		if(leaf_user_node->keys[mid] > key) {
-			end = mid - 1;
-		} else if(leaf_user_node->keys[mid] < key) {
-			start = mid + 1;
-		} else {
-			end = mid;
+	int found = 0;
+	while(end >= start && found ==FALSE){
+		middle = (start + end)/ 2;
+printf("Comparing %d with %d\n", leaf_user_node->keys[middle], key );
+		if(middle - 1 < 0 && end == 0){
+		printf("first if\n");
+			middle = 0;
+			found = TRUE;
+		}else if(start == leaf_user_node->num_filled){
+			printf("2 if\n");
+			middle = start;
+			found = TRUE;
+		}else if(leaf_user_node->keys[middle] >= key 
+			&& leaf_user_node->keys[middle-1] < key){
+			printf("3 if\n");
+			found = TRUE;
+		}else if (leaf_user_node->keys[middle] < key){
+			printf("4 if\n");
+			start = middle + 1;
+		}else if (leaf_user_node->keys[middle] >= key){
+			printf("5 if\n");
+			end = middle - 1;
 		}
 	}
-	
-	if(leaf_user_node->keys[start] != key){
-		start = leaf_user_node->num_filled;
-	}
-	
-	if(j != start) {
-		printf("j != middle !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
+
+	if(j != middle) {
+		printf("j: %d  middle: %d !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n", j, middle);
+	}else{
+		printf("It worked\n");
 	}
 	
 	j = start;
