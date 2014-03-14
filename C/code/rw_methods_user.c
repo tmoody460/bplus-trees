@@ -1,4 +1,4 @@
-#include "bp_structs.c"
+#include "bp_structs_user.c"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

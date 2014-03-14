@@ -1,12 +1,10 @@
-#include "bp_structs.c"
+#include "bp_structs_user.c"
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include "tables.h"
 #include "query_helper.h"
-#include "new_rw_methods.c"
-
-#define ROOT_PATH "user_tree/root.dat"
+#include "rw_methods_user.c"
 
 void insert(int key, char* value);
 void start_tree(int key, char* value);
@@ -215,7 +213,7 @@ void leaf_insert_and_split(char* leaf_filename, int key, char* value){
 	/* new node to be the sibling */
 	node* new_leaf = (node*) malloc(sizeof(node));
 	fill_node(new_leaf);
-	sprintf(filename, "user_tree/node_%06li.dat", node_count);
+	sprintf(filename, "../data/user_tree/node_%06li.dat", node_count);
 	strncpy(new_leaf->filename, filename, TEXT_SHORT);
 	node_count++;
 	strncpy(new_leaf->parent, "\0", TEXT_SHORT);
@@ -305,7 +303,7 @@ void insert_key_into_parent(int key, char* old_child, char* new_child) {
 		root->is_leaf = FALSE;
 		root->keys[0] = key;
 
-		sprintf(filename, "user_tree/node_%06li.dat", node_count);
+		sprintf(filename, "../data/user_tree/node_%06li.dat", node_count);
 		strncpy(old_child_node->filename, filename, TEXT_SHORT);
 		node_count++;
 
@@ -413,7 +411,7 @@ void node_insert_and_split(char* parent, char* new_child, int key, int index){
 	/* make the new sibling */
 	node* new_node = (node*) malloc(sizeof(node));
 	fill_node(new_node);
-	sprintf(filename, "user_tree/node_%06li.dat", node_count);
+	sprintf(filename, "../data/user_tree/node_%06li.dat", node_count);
 	strncpy(new_node->filename, filename, TEXT_SHORT);
 	node_count++;
 	strncpy(new_node->parent, "\0", TEXT_SHORT);

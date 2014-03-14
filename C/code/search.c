@@ -1,11 +1,23 @@
-#include "bp_structs.c"
+#include "bp_structs_user.c"
 #include <string.h>
-#include "rw_methods.c"
+#include "rw_methods_user.c"
 
-node* search_location_tree(char* query){
-	int i = 0;
+void search_location_tree(char* query, node* current);
+
+int main() {
+
 	node* current = (node *) malloc(sizeof(node));
-	read_node(current, ROOT_PATH);
+	read_node(current, (char*)&ROOT_PATH);
+
+	search_location_tree((char*)&"Nebraska", current);
+
+	free(current);
+
+	return 0;
+}
+
+void search_location_tree(char* query, node* current) {
+	int i = 0;
 	int cmp_result = -1;
 	
 	int beginning, middle, end;
@@ -45,6 +57,4 @@ node* search_location_tree(char* query){
 			current = NULL;
 		}
 	}
-	
-	return current;
 }

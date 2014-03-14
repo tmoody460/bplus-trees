@@ -7,6 +7,7 @@
 #define TRUE 1
 #define FALSE 0
 #define TEXT_SHORT 64
+#define ROOT_PATH "../data/user_tree/root.dat"
 
 typedef struct node {
 	
