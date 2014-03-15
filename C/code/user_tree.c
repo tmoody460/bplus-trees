@@ -35,7 +35,7 @@ int main(int argc, char** argv) {
 	user_table_entry_t* current_user;
 	current_user = (user_table_entry_t *) malloc(sizeof(user_table_entry_t));
 
-	gettimeofday(&start_time, NULL);
+	gettimeofday(&time_start, NULL);
 	
 	/* read the first user */
 	if(num_records > 0){
@@ -50,7 +50,7 @@ int main(int argc, char** argv) {
 		sprintf(filename, "../data/sorted_user/0100000/user_%07d.dat", i);
 		insert(current_user->location_id, filename);
 	}
-	gettimeofday(&end_time, NULL);
+	gettimeofday(&time_end, NULL);
 	float total_time = (time_end.tv_sec - time_start.tv_sec)
                     + (time_end.tv_usec - time_start.tv_usec) / 1000000.0f;
 	printf("Processing Time: %f\n", total_time);

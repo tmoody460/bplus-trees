@@ -35,7 +35,7 @@ int main(int argc, char** argv) {
 	current_location = (location_table_entry_t *) malloc(sizeof(location_table_entry_t));
 
 	struct timeval time_start, time_end;
-	gettimeofday(&start_time, NULL);
+	gettimeofday(&time_start, NULL);
 
 	
 	/* read the first location */
@@ -51,7 +51,7 @@ int main(int argc, char** argv) {
 		sprintf(filename, "../data/unique_location/0100000/location_%07d.dat", i);
 		insert(current_location->state, filename);
 	}
-	gettimeofday(&end_time, NULL);
+	gettimeofday(&time_end, NULL);
 	float total_time = (time_end.tv_sec - time_start.tv_sec)
                     + (time_end.tv_usec - time_start.tv_usec) / 1000000.0f;
 	printf("Processing Time: %f\n", total_time);

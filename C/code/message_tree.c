@@ -34,7 +34,7 @@ int main(int argc, char** argv) {
 	current_message = (message_table_entry_t *) malloc(sizeof(message_table_entry_t));
 
 	struct timeval time_start, time_end;
-	gettimeofday(&start_time, NULL);
+	gettimeofday(&time_start, NULL);
 	
 	/* read the first message */
 	if(num_records > 0){
@@ -49,7 +49,7 @@ int main(int argc, char** argv) {
 		sprintf(filename, "messages/message_%06d.dat", i);
 		insert(current_message->location_id, filename);
 	}
-	gettimeofday(&end_time, NULL);
+	gettimeofday(&time_end, NULL);
 	float total_time = (time_end.tv_sec - time_start.tv_sec)
                     + (time_end.tv_usec - time_start.tv_usec) / 1000000.0f;
 	printf("Processing Time: %f\n", total_time);
